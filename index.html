@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ProPlomb - Plomberie Professionnelle</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="header" id="header">
+    <nav class="nav container">
+      <div class="logo">
+        <span class="logo-icon">🔧</span>
+        <span class="logo-text">Pro<strong>Plomb</strong></span>
+      </div>
+      <ul class="nav-links">
+        <li><a href="#services">Services</a></li>
+        <li><a href="#pourquoi">Pourquoi nous</a></li>
+        <li><a href="#tarifs">Tarifs</a></li>
+        <li><a href="#avis">Avis</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+      <a href="tel:+33123456789" class="btn btn-primary nav-cta">📞 01 23 45 67 89</a>
+      <button class="burger" id="burger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </nav>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="container hero-content">
+      <div class="badge">✅ Intervention en moins de 2h</div>
+      <h1>Plombier de confiance à Paris & Île-de-France</h1>
+      <p>Urgences, installations, rénovations — disponibles 24h/24, 7j/7. Devis gratuit en quelques minutes.</p>
+      <div class="hero-actions">
+        <a href="tel:+33123456789" class="btn btn-primary btn-lg">Appeler maintenant</a>
+        <a href="#contact" class="btn btn-outline btn-lg">Demander un devis</a>
+      </div>
+      <div class="hero-stats">
+        <div class="stat"><strong>+2 500</strong><span>Clients satisfaits</span></div>
+        <div class="stat"><strong>15 ans</strong><span>D'expérience</span></div>
+        <div class="stat"><strong>4.9 ⭐</strong><span>Note moyenne</span></div>
+        <div class="stat"><strong>24/7</strong><span>Disponible</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- URGENCE BANNER -->
+  <div class="urgence-banner">
+    <div class="container">
+      <span>🚨 <strong>URGENCE PLOMBERIE ?</strong> Fuite d'eau, canalisation bouchée, chauffe-eau en panne — nous intervenons dans l'heure !</span>
+      <a href="tel:+33123456789" class="btn btn-white">Appeler en urgence</a>
+    </div>
+  </div>
+
+  <!-- SERVICES -->
+  <section class="section" id="services">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Nos services</span>
+        <h2>Tout ce dont vous avez besoin</h2>
+        <p>De la simple fuite à la rénovation complète, nous prenons en charge tous vos travaux de plomberie.</p>
+      </div>
+      <div class="services-grid">
+        <div class="service-card">
+          <div class="service-icon">💧</div>
+          <h3>Fuites d'eau</h3>
+          <p>Détection et réparation de fuites visibles ou cachées. Intervention rapide pour limiter les dégâts.</p>
+          <ul>
+            <li>Robinets et joints</li>
+            <li>Canalisations</li>
+            <li>Détection sous dalle</li>
+          </ul>
+        </div>
+        <div class="service-card featured">
+          <div class="featured-badge">Populaire</div>
+          <div class="service-icon">🚿</div>
+          <h3>Installation sanitaires</h3>
+          <p>Pose et remplacement de tous équipements sanitaires avec garantie pièces et main-d'œuvre.</p>
+          <ul>
+            <li>Douches & baignoires</li>
+            <li>WC & lavabos</li>
+            <li>Mitigeurs thermostatiques</li>
+          </ul>
+        </div>
+        <div class="service-card">
+          <div class="service-icon">🔥</div>
+          <h3>Chauffe-eau & chaudières</h3>
+          <p>Installation, entretien et dépannage de tous types de chauffe-eau et chaudières.</p>
+          <ul>
+            <li>Chauffe-eau électrique</li>
+            <li>Chauffe-eau thermodynamique</li>
+            <li>Chaudière gaz</li>
+          </ul>
+        </div>
+        <div class="service-card">
+          <div class="service-icon">🪠</div>
+          <h3>Débouchage</h3>
+          <p>Débouchage professionnel par hydrocurage haute pression pour canalisations et WC.</p>
+          <ul>
+            <li>WC & siphons</li>
+            <li>Éviers & douches</li>
+            <li>Colonnes montantes</li>
+          </ul>
+        </div>
+        <div class="service-card">
+          <div class="service-icon">🏗️</div>
+          <h3>Rénovation</h3>
+          <p>Refonte complète de votre salle de bain ou cuisine, du projet à la livraison clé en main.</p>
+          <ul>
+            <li>Salle de bain complète</li>
+            <li>Cuisine</li>
+            <li>Mise aux normes</li>
+          </ul>
+        </div>
+        <div class="service-card">
+          <div class="service-icon">🌡️</div>
+          <h3>Chauffage</h3>
+          <p>Installation et entretien de systèmes de chauffage pour votre confort toute l'année.</p>
+          <ul>
+            <li>Radiateurs</li>
+            <li>Plancher chauffant</li>
+            <li>Pompe à chaleur</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- POURQUOI NOUS -->
+  <section class="section section-alt" id="pourquoi">
+    <div class="container">
+      <div class="split-layout">
+        <div class="split-visual">
+          <div class="visual-card">
+            <div class="visual-img">
+              <div class="plumber-illustration">
+                <div class="pi-body"></div>
+                <div class="pi-tools">🔧 🪛 🔩</div>
+              </div>
+            </div>
+            <div class="visual-badges">
+              <div class="vbadge vbadge-green">✓ Artisan certifié RGE</div>
+              <div class="vbadge vbadge-blue">✓ Assurance décennale</div>
+              <div class="vbadge vbadge-orange">✓ Devis gratuit</div>
+            </div>
+          </div>
+        </div>
+        <div class="split-content">
+          <span class="section-tag">Pourquoi nous choisir</span>
+          <h2>Des plombiers que vous pouvez vraiment faire confiance</h2>
+          <div class="features-list">
+            <div class="feature-item">
+              <div class="feature-icon">⚡</div>
+              <div>
+                <h4>Intervention rapide</h4>
+                <p>Nous nous engageons à intervenir dans les 2 heures pour toute urgence, 7j/7 et 24h/24.</p>
+              </div>
+            </div>
+            <div class="feature-item">
+              <div class="feature-icon">💰</div>
+              <div>
+                <h4>Prix transparents</h4>
+                <p>Devis gratuit et détaillé avant chaque intervention. Aucune surprise sur la facture.</p>
+              </div>
+            </div>
+            <div class="feature-item">
+              <div class="feature-icon">🏆</div>
+              <div>
+                <h4>Garantie de satisfaction</h4>
+                <p>Tous nos travaux sont garantis. Si vous n'êtes pas satisfait, nous revenons sans frais.</p>
+              </div>
+            </div>
+            <div class="feature-item">
+              <div class="feature-icon">📜</div>
+              <div>
+                <h4>Artisans qualifiés</h4>
+                <p>Notre équipe est composée de plombiers certifiés avec plus de 10 ans d'expérience chacun.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TARIFS -->
+  <section class="section" id="tarifs">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Tarifs</span>
+        <h2>Des prix clairs et honnêtes</h2>
+        <p>Pas de mauvaise surprise — nos tarifs sont affichés et incluent le déplacement.</p>
+      </div>
+      <div class="tarifs-grid">
+        <div class="tarif-card">
+          <h3>Interventions courantes</h3>
+          <div class="tarif-list">
+            <div class="tarif-item"><span>Déplacement + diagnostic</span><span class="price">Gratuit</span></div>
+            <div class="tarif-item"><span>Remplacement robinet</span><span class="price">à partir de 80 €</span></div>
+            <div class="tarif-item"><span>Joint / fuite simple</span><span class="price">à partir de 60 €</span></div>
+            <div class="tarif-item"><span>Débouchage WC</span><span class="price">à partir de 90 €</span></div>
+            <div class="tarif-item"><span>Débouchage canalisation</span><span class="price">à partir de 120 €</span></div>
+          </div>
+        </div>
+        <div class="tarif-card tarif-featured">
+          <div class="tarif-label">Le plus demandé</div>
+          <h3>Forfait Urgence 24/7</h3>
+          <div class="tarif-price-big">
+            <span class="currency">€</span>
+            <span class="amount">89</span>
+            <span class="unit">/intervention</span>
+          </div>
+          <p>Intervention garantie en moins de 2h, nuit et week-end inclus.</p>
+          <ul class="tarif-includes">
+            <li>✓ Déplacement inclus</li>
+            <li>✓ Diagnostic complet</li>
+            <li>✓ Devis immédiat</li>
+            <li>✓ Paiement après travaux</li>
+          </ul>
+          <a href="tel:+33123456789" class="btn btn-primary btn-block">Appeler maintenant</a>
+        </div>
+        <div class="tarif-card">
+          <h3>Installations & rénovation</h3>
+          <div class="tarif-list">
+            <div class="tarif-item"><span>Pose chauffe-eau électrique</span><span class="price">à partir de 250 €</span></div>
+            <div class="tarif-item"><span>Installation douche</span><span class="price">à partir de 400 €</span></div>
+            <div class="tarif-item"><span>Remplacement WC</span><span class="price">à partir de 300 €</span></div>
+            <div class="tarif-item"><span>Salle de bain complète</span><span class="price">sur devis</span></div>
+            <div class="tarif-item"><span>Mise aux normes</span><span class="price">sur devis</span></div>
+          </div>
+        </div>
+      </div>
+      <p class="tarif-note">* Tarifs indicatifs HT. Un devis précis vous sera remis avant tout travaux.</p>
+    </div>
+  </section>
+
+  <!-- AVIS -->
+  <section class="section section-alt" id="avis">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Témoignages</span>
+        <h2>Ce que disent nos clients</h2>
+        <p>Plus de 2 500 clients nous font confiance en Île-de-France.</p>
+      </div>
+      <div class="avis-grid">
+        <div class="avis-card">
+          <div class="stars">⭐⭐⭐⭐⭐</div>
+          <p>"Fuite d'eau un dimanche soir, intervention en moins d'une heure. Travail soigné, prix raisonnable. Je recommande vivement !"</p>
+          <div class="avis-author">
+            <div class="avatar">ML</div>
+            <div><strong>Marie L.</strong><br><small>Paris 11e</small></div>
+          </div>
+        </div>
+        <div class="avis-card">
+          <div class="stars">⭐⭐⭐⭐⭐</div>
+          <p>"Rénovation complète de ma salle de bain. Équipe professionnelle, respectueuse des délais et du budget. Résultat impeccable."</p>
+          <div class="avis-author">
+            <div class="avatar">TC</div>
+            <div><strong>Thomas C.</strong><br><small>Boulogne-Billancourt</small></div>
+          </div>
+        </div>
+        <div class="avis-card">
+          <div class="stars">⭐⭐⭐⭐⭐</div>
+          <p>"Débouchage rapide et efficace. Le plombier a expliqué le problème clairement et proposé des solutions durables. Très satisfait."</p>
+          <div class="avis-author">
+            <div class="avatar">SB</div>
+            <div><strong>Sophie B.</strong><br><small>Vincennes</small></div>
+          </div>
+        </div>
+        <div class="avis-card">
+          <div class="stars">⭐⭐⭐⭐⭐</div>
+          <p>"Remplacement chauffe-eau en urgence, fait en 3h chrono. Prise en charge parfaite, je suis client fidèle depuis 5 ans."</p>
+          <div class="avis-author">
+            <div class="avatar">PD</div>
+            <div><strong>Philippe D.</strong><br><small>Montreuil</small></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section class="section" id="contact">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Contact</span>
+        <h2>Demandez votre devis gratuit</h2>
+        <p>Réponse sous 30 minutes aux heures ouvrées — sous 2h en urgence.</p>
+      </div>
+      <div class="contact-layout">
+        <div class="contact-info">
+          <div class="contact-item">
+            <div class="contact-icon">📞</div>
+            <div>
+              <h4>Téléphone / Urgences</h4>
+              <a href="tel:+33123456789">01 23 45 67 89</a>
+              <small>7j/7 — 24h/24</small>
+            </div>
+          </div>
+          <div class="contact-item">
+            <div class="contact-icon">📧</div>
+            <div>
+              <h4>Email</h4>
+              <a href="mailto:contact@proplomb.fr">contact@proplomb.fr</a>
+              <small>Réponse sous 30 min</small>
+            </div>
+          </div>
+          <div class="contact-item">
+            <div class="contact-icon">📍</div>
+            <div>
+              <h4>Zone d'intervention</h4>
+              <span>Paris & Île-de-France</span>
+              <small>Tous les arrondissements</small>
+            </div>
+          </div>
+          <div class="contact-item">
+            <div class="contact-icon">🕐</div>
+            <div>
+              <h4>Horaires</h4>
+              <span>Lun–Ven : 7h–20h</span>
+              <small>Urgences : 24h/24</small>
+            </div>
+          </div>
+        </div>
+        <form class="contact-form" id="contactForm">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="nom">Nom *</label>
+              <input type="text" id="nom" name="nom" placeholder="Votre nom" required />
+            </div>
+            <div class="form-group">
+              <label for="telephone">Téléphone *</label>
+              <input type="tel" id="telephone" name="telephone" placeholder="06 XX XX XX XX" required />
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" placeholder="votre@email.fr" />
+          </div>
+          <div class="form-group">
+            <label for="service">Type d'intervention *</label>
+            <select id="service" name="service" required>
+              <option value="">Sélectionnez un service</option>
+              <option>Urgence — fuite d'eau</option>
+              <option>Urgence — canalisation bouchée</option>
+              <option>Installation sanitaire</option>
+              <option>Chauffe-eau / chaudière</option>
+              <option>Débouchage</option>
+              <option>Rénovation salle de bain</option>
+              <option>Autre</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="message">Description du problème</label>
+            <textarea id="message" name="message" rows="4" placeholder="Décrivez votre problème..."></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block">Envoyer ma demande</button>
+          <p class="form-note">Devis 100% gratuit et sans engagement</p>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="logo">
+            <span class="logo-icon">🔧</span>
+            <span class="logo-text">Pro<strong>Plomb</strong></span>
+          </div>
+          <p>Votre plombier de confiance en Île-de-France depuis 2009. Disponible 24h/24, 7j/7.</p>
+        </div>
+        <div class="footer-links">
+          <h4>Services</h4>
+          <ul>
+            <li><a href="#services">Fuites d'eau</a></li>
+            <li><a href="#services">Installation sanitaires</a></li>
+            <li><a href="#services">Chauffe-eau</a></li>
+            <li><a href="#services">Débouchage</a></li>
+            <li><a href="#services">Rénovation</a></li>
+          </ul>
+        </div>
+        <div class="footer-links">
+          <h4>Entreprise</h4>
+          <ul>
+            <li><a href="#pourquoi">À propos</a></li>
+            <li><a href="#avis">Témoignages</a></li>
+            <li><a href="#tarifs">Tarifs</a></li>
+            <li><a href="#contact">Contact</a></li>
+          </ul>
+        </div>
+        <div class="footer-contact">
+          <h4>Contact urgent</h4>
+          <a href="tel:+33123456789" class="footer-phone">📞 01 23 45 67 89</a>
+          <p>Disponible 24h/24 — 7j/7</p>
+          <a href="mailto:contact@proplomb.fr">contact@proplomb.fr</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2025 ProPlomb. Tous droits réservés. — SIRET : 123 456 789 00012 — Artisan RGE certifié</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

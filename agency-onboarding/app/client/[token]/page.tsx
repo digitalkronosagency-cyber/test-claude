@@ -16,31 +16,37 @@ export default async function ClientTokenPage({ params }: { params: Promise<{ to
   }
 
   if (!clientId) {
-    const client = getClientByToken(token) as Record<string, unknown> | undefined
+    const client = await getClientByToken(token)
     if (!client) {
       return (
         <div className="min-h-screen flex items-center justify-center bg-gray-50">
           <div className="text-center">
             <h1 className="text-2xl font-bold text-gray-900 mb-2">Lien invalide</h1>
-            <p className="text-gray-500">Ce lien d'invitation n'est pas valide ou a expiré.</p>
+            <p className="text-gray-500">Ce lien d&apos;invitation n&apos;est pas valide ou a expiré.</p>
           </div>
         </div>
       )
     }
     clientId = client.id as string
+    await createClientSession(clientId)
   }
 
-  const client = getClientById(clientId) as Record<string, unknown> | undefined
+  const client = await getClientById(clientId!)
   if (!client) redirect('/')
 
-  const formConfig = getFormConfig() as { sections: unknown[] }
-  const totalSections = formConfig?.sections?.length || 9
-  const responses = getResponsesForClient(clientId)
+  const [formConfig, responses, steps, unreadMessages, availableFilesArr] = await Promise.all([
+    getFormConfig() as Promise<{ sections: unknown[] }>,
+    getResponsesForClient(clientId!),
+    getStepsForClient(clientId!),
+    getUnreadAdminMessages(clientId!),
+    getFilesForClient(clientId!, true),
+  ])
+
+  const totalSections = (formConfig as { sections: unknown[] })?.sections?.length || 9
   const completedSections = responses.filter(r => r.completed).length
   const formCompletion = Math.round((completedSections / totalSections) * 100)
 
-  const steps = getStepsForClient(clientId) as Record<string, unknown>[]
-  const doneSteps = steps.filter(s => s.status === 'done').length
+  const doneSteps = (steps as Record<string, unknown>[]).filter(s => s.status === 'done').length
   const projectCompletion = steps.length > 0 ? Math.round((doneSteps / steps.length) * 100) : 0
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -51,8 +57,8 @@ export default async function ClientTokenPage({ params }: { params: Promise<{ to
       token={token}
       formCompletion={formCompletion}
       projectCompletion={projectCompletion}
-      unreadMessages={getUnreadAdminMessages(clientId).length}
-      availableFiles={getFilesForClient(clientId, true).length}
+      unreadMessages={unreadMessages.length}
+      availableFiles={availableFilesArr.length}
     />
   )
 }

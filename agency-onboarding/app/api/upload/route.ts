@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
   const storagePath = `/uploads/${bucket}/${clientId}/${filename}`
 
   if (bucket === 'shared-files' && adminSession) {
-    createSharedFile({
+    await createSharedFile({
       client_id: clientId,
       filename,
       original_name: file.name,

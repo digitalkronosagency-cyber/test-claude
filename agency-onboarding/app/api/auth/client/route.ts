@@ -5,7 +5,7 @@ import { getClientByToken } from '@/lib/db-helpers'
 export async function POST(req: NextRequest) {
   const { token } = await req.json()
 
-  const client = getClientByToken(token) as Record<string, unknown> | undefined
+  const client = await getClientByToken(token)
   if (!client) {
     return NextResponse.json({ error: 'Lien invalide ou expiré' }, { status: 401 })
   }

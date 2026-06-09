@@ -8,7 +8,7 @@ export async function POST(req: NextRequest) {
 
   const { stepId, comment } = await req.json()
 
-  const data = updateStep(stepId, session.clientId, {
+  const data = await updateStep(stepId, session.clientId, {
     status: 'done',
     approved_at: new Date().toISOString(),
     completed_at: new Date().toISOString(),

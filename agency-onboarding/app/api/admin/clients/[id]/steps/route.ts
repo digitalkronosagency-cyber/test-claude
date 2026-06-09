@@ -14,14 +14,14 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   if (status !== undefined) updateData.status = status
   if (admin_notes !== undefined) updateData.admin_notes = admin_notes
   if (client_message !== undefined) updateData.client_message = client_message
-  if (requires_approval !== undefined) updateData.requires_approval = requires_approval ? 1 : 0
+  if (requires_approval !== undefined) updateData.requires_approval = requires_approval
   if (estimated_date !== undefined) updateData.estimated_date = estimated_date
   if (status === 'done') updateData.completed_at = new Date().toISOString()
 
-  const step = updateStep(stepId, id, updateData) as Record<string, unknown>
+  const step = await updateStep(stepId, id, updateData) as Record<string, unknown>
 
   if (status === 'done') {
-    const client = getClientById(id) as Record<string, unknown> | null
+    const client = await getClientById(id)
     if (client?.email) {
       await sendStatusUpdateEmail({
         to: client.email as string,

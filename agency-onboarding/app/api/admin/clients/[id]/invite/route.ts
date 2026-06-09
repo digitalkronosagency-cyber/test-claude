@@ -8,7 +8,7 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
   if (!session) return NextResponse.json({ error: 'Non autorisé' }, { status: 401 })
 
   const { id } = await params
-  const client = getClientById(id) as Record<string, unknown> | undefined
+  const client = await getClientById(id)
   if (!client) return NextResponse.json({ error: 'Client introuvable' }, { status: 404 })
 
   const inviteLink = `${process.env.NEXT_PUBLIC_APP_URL}/client/${client.invite_token}`
@@ -20,7 +20,7 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
     inviteToken: client.invite_token as string,
   })
 
-  updateClient(id, { invite_sent_at: new Date().toISOString(), status: 'invited' })
+  await updateClient(id, { invite_sent_at: new Date().toISOString(), status: 'invited' })
 
   return NextResponse.json({ success: true, inviteLink })
 }

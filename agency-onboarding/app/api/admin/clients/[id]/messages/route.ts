@@ -8,6 +8,6 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
 
   const { id } = await params
   const { content } = await req.json()
-  const msg = createMessage(id, 'admin', content)
+  const msg = await createMessage(id, 'admin', content)
   return NextResponse.json(msg)
 }

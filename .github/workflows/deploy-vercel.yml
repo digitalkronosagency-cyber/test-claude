@@ -40,40 +40,24 @@ jobs:
       - name: Install Vercel CLI
         run: npm install -g vercel@latest
 
-      - name: Install dependencies and build
-        working-directory: agency-onboarding
-        run: |
-          ANK=$(echo c2JfcHVibGlzaGFibGVfQnVDbGNva2ZQajFfNFIyQU51SDA0d18zNXdVYzBpdw== | base64 -d)
-          SRK=$(echo c2Jfc2VjcmV0X1daYlZaNUNySEVuUVZwenYwUXNmd2dfemMzUVlCdmw= | base64 -d)
-          export NEXT_PUBLIC_SUPABASE_URL="https://ttsjicsjrpcjibsylctq.supabase.co"
-          export NEXT_PUBLIC_SUPABASE_ANON_KEY="$ANK"
-          export SUPABASE_SERVICE_ROLE_KEY="$SRK"
-          export NEXT_PUBLIC_APP_URL="https://digitalkronosagency-onboarding.vercel.app"
-          npm ci
-          npm run build
-
-      - name: Set env vars and deploy prebuilt
+      - name: Build and deploy
         run: |
           VT=$(echo dmNwXzNGU0ppUFk5ZmtmRmQ4bU5IUG5Ga3lid3VSRjhwWWFxWDU0U0pPY2NqUkdrcVF0UkIzMWNiYkR5 | base64 -d)
           SRK=$(echo c2Jfc2VjcmV0X1daYlZaNUNySEVuUVZwenYwUXNmd2dfemMzUVlCdmw= | base64 -d)
           ANK=$(echo c2JfcHVibGlzaGFibGVfQnVDbGNva2ZQajFfNFIyQU51SDA0d18zNXdVYzBpdw== | base64 -d)
 
-          echo "=== Step 1: Getting Vercel project info ==="
-          PROJECT_JSON=$(curl -s "https://api.vercel.com/v9/projects/test-claude" \
-            -H "Authorization: Bearer $VT")
-          echo "Project info received"
+          # Get Vercel project info
+          PROJECT_JSON=$(curl -s "https://api.vercel.com/v9/projects/test-claude" -H "Authorization: Bearer $VT")
           PROJECT_ID=$(echo "$PROJECT_JSON" | python3 -c "import sys,json; print(json.load(sys.stdin)['id'])")
           ORG_ID=$(echo "$PROJECT_JSON" | python3 -c "import sys,json; print(json.load(sys.stdin)['accountId'])")
           echo "Project ID: $PROJECT_ID"
 
-          echo "=== Step 2: Clearing rootDirectory ==="
+          # Clear rootDirectory
           curl -s -X PATCH "https://api.vercel.com/v9/projects/$PROJECT_ID" \
-            -H "Authorization: Bearer $VT" \
-            -H "Content-Type: application/json" \
+            -H "Authorization: Bearer $VT" -H "Content-Type: application/json" \
             -d '{"rootDirectory": null}' > /dev/null
 
-          echo "=== Step 3: Setting env vars ==="
-          # Set env vars via Vercel API (delete existing then create fresh)
+          # Set env vars on Vercel project
           upsert_env() {
             local KEY="$1" VAL="$2"
             EXISTING=$(curl -s "https://api.vercel.com/v9/projects/$PROJECT_ID/env?target=production" -H "Authorization: Bearer $VT")
@@ -82,12 +66,10 @@ jobs:
               curl -s -X DELETE "https://api.vercel.com/v9/projects/$PROJECT_ID/env/$EXISTING_ID" -H "Authorization: Bearer $VT" > /dev/null
             fi
             curl -s -X POST "https://api.vercel.com/v10/projects/$PROJECT_ID/env" \
-              -H "Authorization: Bearer $VT" \
-              -H "Content-Type: application/json" \
+              -H "Authorization: Bearer $VT" -H "Content-Type: application/json" \
               -d "[{\"key\":\"$KEY\",\"value\":\"$VAL\",\"type\":\"plain\",\"target\":[\"production\"]}]" > /dev/null
             echo "Set $KEY"
           }
-
           upsert_env "NEXT_PUBLIC_SUPABASE_URL"  "https://ttsjicsjrpcjibsylctq.supabase.co"
           upsert_env "NEXT_PUBLIC_SUPABASE_ANON_KEY" "$ANK"
           upsert_env "SUPABASE_SERVICE_ROLE_KEY"  "$SRK"
@@ -96,16 +78,26 @@ jobs:
           upsert_env "JWT_SECRET"                 "digitalkronosagency-prod-jwt-secret-2024"
           upsert_env "NEXT_PUBLIC_APP_URL"        "https://digitalkronosagency-onboarding.vercel.app"
 
-          echo "=== Step 4: Deploying to Vercel ==="
-          # Create .vercel/project.json and deploy
+          # Create .vercel/project.json
           cd agency-onboarding
           mkdir -p .vercel
           echo "{\"projectId\":\"$PROJECT_ID\",\"orgId\":\"$ORG_ID\"}" > .vercel/project.json
-          echo "Project JSON: $(cat .vercel/project.json)"
 
+          # Install deps
+          npm ci
+
+          # Build with vercel build (creates .vercel/output/ for --prebuilt)
+          export NEXT_PUBLIC_SUPABASE_URL="https://ttsjicsjrpcjibsylctq.supabase.co"
+          export NEXT_PUBLIC_SUPABASE_ANON_KEY="$ANK"
+          export SUPABASE_SERVICE_ROLE_KEY="$SRK"
+          export NEXT_PUBLIC_APP_URL="https://digitalkronosagency-onboarding.vercel.app"
+          export ADMIN_EMAIL="admin@digitalkronosagency.com"
+          export ADMIN_PASSWORD="admin123"
+          export JWT_SECRET="digitalkronosagency-prod-jwt-secret-2024"
+          vercel build --prod --yes --token "$VT"
+
+          # Deploy prebuilt output
           vercel deploy --prebuilt --prod --yes --token "$VT"
-          echo "✓ Deployed successfully"
-
           echo "============================================"
           echo "LIVE URL: https://digitalkronosagency-onboarding.vercel.app"
           echo "============================================"

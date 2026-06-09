@@ -63,25 +63,16 @@ jobs:
           # Set env vars via Vercel API (delete existing then create fresh)
           upsert_env() {
             local KEY="$1" VAL="$2"
-            # Delete existing env var for this key in production
-            EXISTING=$(curl -s "https://api.vercel.com/v9/projects/$PROJECT_ID/env?target=production" \
-              -H "Authorization: Bearer $VT")
-            EXISTING_ID=$(echo "$EXISTING" | python3 -c "
-import sys,json
-envs=json.load(sys.stdin).get('envs',[])
-ids=[e['id'] for e in envs if e['key']=='$KEY']
-print(ids[0] if ids else '')
-" 2>/dev/null || true)
+            EXISTING=$(curl -s "https://api.vercel.com/v9/projects/$PROJECT_ID/env?target=production" -H "Authorization: Bearer $VT")
+            EXISTING_ID=$(echo "$EXISTING" | python3 -c "import sys,json; envs=json.load(sys.stdin).get('envs',[]); ids=[e['id'] for e in envs if e['key']=='$KEY']; print(ids[0] if ids else '')" 2>/dev/null || true)
             if [ -n "$EXISTING_ID" ]; then
-              curl -s -X DELETE "https://api.vercel.com/v9/projects/$PROJECT_ID/env/$EXISTING_ID" \
-                -H "Authorization: Bearer $VT" > /dev/null
+              curl -s -X DELETE "https://api.vercel.com/v9/projects/$PROJECT_ID/env/$EXISTING_ID" -H "Authorization: Bearer $VT" > /dev/null
             fi
-            # Create new env var
             curl -s -X POST "https://api.vercel.com/v10/projects/$PROJECT_ID/env" \
               -H "Authorization: Bearer $VT" \
               -H "Content-Type: application/json" \
               -d "[{\"key\":\"$KEY\",\"value\":\"$VAL\",\"type\":\"plain\",\"target\":[\"production\"]}]" > /dev/null
-            echo "✓ Set $KEY"
+            echo "Set $KEY"
           }
 
           upsert_env "NEXT_PUBLIC_SUPABASE_URL"  "https://ttsjicsjrpcjibsylctq.supabase.co"

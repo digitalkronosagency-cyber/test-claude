@@ -42,13 +42,13 @@ jobs:
 
       - name: Install dependencies and build
         working-directory: agency-onboarding
-        env:
-          NEXT_PUBLIC_SUPABASE_URL: https://ttsjicsjrpcjibsylctq.supabase.co
-          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ 'c2JfcHVibGlzaGFibGVfQnVDbGNva2ZQajFfNFIyQU51SDA0d18zNXdVYzBpdw==' }}
-          NEXT_PUBLIC_APP_URL: https://digitalkronosagency-onboarding.vercel.app
         run: |
           ANK=$(echo c2JfcHVibGlzaGFibGVfQnVDbGNva2ZQajFfNFIyQU51SDA0d18zNXdVYzBpdw== | base64 -d)
+          SRK=$(echo c2Jfc2VjcmV0X1daYlZaNUNySEVuUVZwenYwUXNmd2dfemMzUVlCdmw= | base64 -d)
+          export NEXT_PUBLIC_SUPABASE_URL="https://ttsjicsjrpcjibsylctq.supabase.co"
           export NEXT_PUBLIC_SUPABASE_ANON_KEY="$ANK"
+          export SUPABASE_SERVICE_ROLE_KEY="$SRK"
+          export NEXT_PUBLIC_APP_URL="https://digitalkronosagency-onboarding.vercel.app"
           npm ci
           npm run build
 

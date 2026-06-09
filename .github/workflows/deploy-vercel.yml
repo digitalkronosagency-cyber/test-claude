@@ -13,21 +13,17 @@ jobs:
         run: |
           PAT=$(echo c2JwX2E2NjY2YTcwNWFiZmE1MDg2YTMyNmNhMTE5ZGQ3ZjQ5N2FhZTlkN2U= | base64 -d)
           SQL="CREATE TABLE IF NOT EXISTS clients (id UUID PRIMARY KEY DEFAULT gen_random_uuid(), company_name TEXT NOT NULL DEFAULT '', contact_name TEXT, email TEXT NOT NULL DEFAULT '', phone TEXT, city TEXT, region TEXT, revenue_range TEXT, delivery_date TEXT, invite_token TEXT UNIQUE, status TEXT NOT NULL DEFAULT 'invited', invite_sent_at TIMESTAMPTZ, created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(), updated_at TIMESTAMPTZ DEFAULT NOW()); CREATE TABLE IF NOT EXISTS project_steps (id UUID PRIMARY KEY DEFAULT gen_random_uuid(), client_id UUID NOT NULL REFERENCES clients(id) ON DELETE CASCADE, step_key TEXT NOT NULL, step_name TEXT NOT NULL, step_icon TEXT, order_index INTEGER NOT NULL DEFAULT 0, status TEXT NOT NULL DEFAULT 'pending', requires_approval BOOLEAN DEFAULT FALSE, approved_by_client BOOLEAN DEFAULT FALSE, client_message TEXT, admin_notes TEXT, completed_at TIMESTAMPTZ, created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()); CREATE TABLE IF NOT EXISTS onboarding_responses (id UUID PRIMARY KEY DEFAULT gen_random_uuid(), client_id UUID NOT NULL REFERENCES clients(id) ON DELETE CASCADE, section_key TEXT NOT NULL, data JSONB, completed BOOLEAN DEFAULT FALSE, updated_at TIMESTAMPTZ DEFAULT NOW(), UNIQUE(client_id, section_key)); CREATE TABLE IF NOT EXISTS messages (id UUID PRIMARY KEY DEFAULT gen_random_uuid(), client_id UUID NOT NULL REFERENCES clients(id) ON DELETE CASCADE, sender TEXT NOT NULL, content TEXT NOT NULL, read BOOLEAN DEFAULT FALSE, created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()); CREATE TABLE IF NOT EXISTS shared_files (id UUID PRIMARY KEY DEFAULT gen_random_uuid(), client_id UUID NOT NULL REFERENCES clients(id) ON DELETE CASCADE, filename TEXT NOT NULL, original_name TEXT NOT NULL, storage_path TEXT NOT NULL, file_type TEXT, size_bytes INTEGER, uploaded_by TEXT NOT NULL DEFAULT 'admin', visible_to_client BOOLEAN DEFAULT TRUE, created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()); CREATE TABLE IF NOT EXISTS form_config (id INTEGER PRIMARY KEY DEFAULT 1, config JSONB NOT NULL, updated_at TIMESTAMPTZ DEFAULT NOW());"
-
           RESULT=$(curl -s -w "\nHTTP_STATUS:%{http_code}" -X POST \
             "https://api.supabase.com/v1/projects/ttsjicsjrpcjibsylctq/database/query" \
             -H "Authorization: Bearer $PAT" \
             -H "Content-Type: application/json" \
             -d "{\"query\": \"$SQL\"}")
-
           HTTP_CODE=$(echo "$RESULT" | grep "HTTP_STATUS:" | cut -d: -f2)
-          BODY=$(echo "$RESULT" | grep -v "HTTP_STATUS:")
           echo "HTTP status: $HTTP_CODE"
-          echo "Response: $BODY"
           if [ "$HTTP_CODE" = "200" ] || [ "$HTTP_CODE" = "201" ]; then
-            echo "✓ Tables created successfully"
+            echo "✓ Tables created / already exist"
           else
-            echo "✗ Migration failed — check the response above"
+            echo "Response: $(echo "$RESULT" | grep -v "HTTP_STATUS:")"
             exit 1
           fi
 
@@ -44,15 +40,17 @@ jobs:
       - name: Install Vercel CLI
         run: npm install -g vercel@latest
 
-      - name: Deploy
+      - name: Set env vars and deploy
         run: |
           VT=$(echo dmNwXzNGU0ppUFk5ZmtmRmQ4bU5IUG5Ga3lid3VSRjhwWWFxWDU0U0pPY2NqUkdrcVF0UkIzMWNiYkR5 | base64 -d)
           SRK=$(echo c2Jfc2VjcmV0X1daYlZaNUNySEVuUVZwenYwUXNmd2dfemMzUVlCdmw= | base64 -d)
           ANK=$(echo c2JfcHVibGlzaGFibGVfQnVDbGNva2ZQajFfNFIyQU51SDA0d18zNXdVYzBpdw== | base64 -d)
           cd agency-onboarding
 
-          vercel deploy --prod --yes --name digitalkronosagency-onboarding --token "$VT"
+          # Link project without building
+          vercel link --yes --token "$VT" 2>/dev/null || true
 
+          # Set all env vars (ignore errors if already set)
           echo "https://ttsjicsjrpcjibsylctq.supabase.co" | vercel env add NEXT_PUBLIC_SUPABASE_URL production --token "$VT" --yes 2>/dev/null || true
           echo "$ANK" | vercel env add NEXT_PUBLIC_SUPABASE_ANON_KEY production --token "$VT" --yes 2>/dev/null || true
           echo "$SRK" | vercel env add SUPABASE_SERVICE_ROLE_KEY production --token "$VT" --yes 2>/dev/null || true
@@ -61,7 +59,8 @@ jobs:
           echo "digitalkronosagency-prod-jwt-secret-2024" | vercel env add JWT_SECRET production --token "$VT" --yes 2>/dev/null || true
           echo "https://digitalkronosagency-onboarding.vercel.app" | vercel env add NEXT_PUBLIC_APP_URL production --token "$VT" --yes 2>/dev/null || true
 
-          vercel deploy --prod --yes --name digitalkronosagency-onboarding --token "$VT"
+          # Deploy with all env vars set
+          vercel deploy --prod --yes --token "$VT"
 
           echo "============================================"
           echo "LIVE URL: https://digitalkronosagency-onboarding.vercel.app"

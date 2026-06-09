@@ -93,7 +93,8 @@ jobs:
           echo "{\"projectId\":\"$PROJECT_ID\",\"orgId\":\"$ORG_ID\"}" > .vercel/project.json
           echo "Project JSON: $(cat .vercel/project.json)"
 
-          vercel deploy --prod --yes --token "$VT"
+          vercel deploy --prod --yes --no-wait --token "$VT"
+          echo "✓ Deployment queued on Vercel — build continues on Vercel servers"
 
           echo "============================================"
           echo "LIVE URL: https://digitalkronosagency-onboarding.vercel.app"

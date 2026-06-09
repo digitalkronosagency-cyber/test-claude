@@ -30,6 +30,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     needs: migrate
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
 
@@ -46,6 +47,7 @@ jobs:
           SRK=$(echo c2Jfc2VjcmV0X1daYlZaNUNySEVuUVZwenYwUXNmd2dfemMzUVlCdmw= | base64 -d)
           ANK=$(echo c2JfcHVibGlzaGFibGVfQnVDbGNva2ZQajFfNFIyQU51SDA0d18zNXdVYzBpdw== | base64 -d)
 
+          echo "=== Step 1: Getting Vercel project info ==="
           # Get project info from Vercel API
           PROJECT_JSON=$(curl -s "https://api.vercel.com/v9/projects/test-claude" \
             -H "Authorization: Bearer $VT")
@@ -54,12 +56,14 @@ jobs:
           ORG_ID=$(echo "$PROJECT_JSON" | python3 -c "import sys,json; print(json.load(sys.stdin)['accountId'])")
           echo "Project ID: $PROJECT_ID"
 
+          echo "=== Step 2: Clearing rootDirectory ==="
           # Clear rootDirectory so Vercel builds from the root of uploaded files
           curl -s -X PATCH "https://api.vercel.com/v9/projects/$PROJECT_ID" \
             -H "Authorization: Bearer $VT" \
             -H "Content-Type: application/json" \
             -d '{"rootDirectory": null}' > /dev/null
 
+          echo "=== Step 3: Setting env vars ==="
           # Set env vars via Vercel API (delete existing then create fresh)
           upsert_env() {
             local KEY="$1" VAL="$2"
@@ -83,10 +87,12 @@ jobs:
           upsert_env "JWT_SECRET"                 "digitalkronosagency-prod-jwt-secret-2024"
           upsert_env "NEXT_PUBLIC_APP_URL"        "https://digitalkronosagency-onboarding.vercel.app"
 
+          echo "=== Step 4: Deploying to Vercel ==="
           # Create .vercel/project.json and deploy
           cd agency-onboarding
           mkdir -p .vercel
           echo "{\"projectId\":\"$PROJECT_ID\",\"orgId\":\"$ORG_ID\"}" > .vercel/project.json
+          echo "Project JSON: $(cat .vercel/project.json)"
 
           vercel deploy --prod --yes --token "$VT"
 

@@ -1,0 +1,166 @@
+import { FormConfig } from '@/types'
+
+export const DEFAULT_FORM_CONFIG: FormConfig['config'] = {
+  sections: [
+    {
+      id: 'company',
+      key: 'company',
+      title: 'Votre entreprise',
+      icon: '🏢',
+      description: 'Informations générales sur votre société',
+      fields: [
+        { id: 'company_name', label: 'Nom de l\'entreprise', type: 'text', required: true, placeholder: 'Ex: Dupont Maçonnerie' },
+        { id: 'contact_name', label: 'Votre nom', type: 'text', required: true, placeholder: 'Prénom Nom' },
+        { id: 'email', label: 'Email', type: 'email', required: true, placeholder: 'contact@entreprise.fr' },
+        { id: 'phone', label: 'Téléphone', type: 'tel', required: true, placeholder: '06 xx xx xx xx' },
+        { id: 'city', label: 'Ville principale', type: 'text', required: true, placeholder: 'Lyon' },
+        { id: 'region', label: 'Région', type: 'text', required: false, placeholder: 'Auvergne-Rhône-Alpes' },
+        { id: 'founded', label: 'Année de création', type: 'number', required: false, placeholder: '2005' },
+        { id: 'employees', label: 'Nombre de salariés', type: 'select', required: false, options: ['1-5', '6-20', '21-50', '50+'] },
+        { id: 'revenue_range', label: 'CA annuel', type: 'select', required: false, options: ['< 500K€', '500K-1M€', '1M-5M€', '5M-20M€', '> 20M€'] },
+      ],
+    },
+    {
+      id: 'activities',
+      key: 'activities',
+      title: 'Activités BTP',
+      icon: '🔨',
+      description: 'Sélectionnez vos domaines d\'activité',
+      fields: [
+        {
+          id: 'selected',
+          label: 'Vos activités',
+          type: 'multiselect',
+          required: true,
+          options: [
+            'Maçonnerie', 'Gros œuvre', 'Terrassement', 'Fondations',
+            'Charpente', 'Couverture', 'Zinguerie', 'Isolation',
+            'Plomberie', 'Chauffage', 'Climatisation', 'Électricité',
+            'Plâtrerie', 'Peinture', 'Carrelage', 'Parquet',
+            'Menuiserie', 'Serrurerie', 'Vitrerie', 'Façades',
+            'Paysagisme', 'VRD', 'Démolition', 'Rénovation énergétique',
+          ],
+        },
+        { id: 'speciality', label: 'Spécialité ou savoir-faire particulier', type: 'textarea', required: false, placeholder: 'Ex: Spécialiste rénovation bâtiment ancien, certifié RGE...' },
+      ],
+    },
+    {
+      id: 'certifications',
+      key: 'certifications',
+      title: 'Certifications & Labels',
+      icon: '🏅',
+      description: 'Vos certifications professionnelles',
+      fields: [
+        {
+          id: 'selected',
+          label: 'Vos certifications',
+          type: 'multiselect',
+          required: false,
+          options: [
+            'RGE (Reconnu Garant de l\'Environnement)', 'Qualibat', 'QualiPAC', 'QualiSol',
+            'Qualifelec', 'QUALIT\'ENR', 'Certibat', 'NF Habitat',
+            'ISO 9001', 'ISO 14001', 'MASE', 'OPPBTP',
+            'Artisan de confiance', 'Pro de la rénovation', 'ECO Artisan',
+          ],
+        },
+      ],
+    },
+    {
+      id: 'seo',
+      key: 'seo',
+      title: 'Zone d\'intervention & SEO',
+      icon: '📍',
+      description: 'Définissez votre zone géographique pour le référencement',
+      fields: [
+        { id: 'city_main', label: 'Ville principale d\'intervention', type: 'text', required: true, placeholder: 'Ex: Lyon' },
+        { id: 'cities_secondary', label: 'Villes secondaires (séparées par virgules)', type: 'textarea', required: false, placeholder: 'Villeurbanne, Vénissieux, Décines...' },
+        { id: 'radius', label: 'Rayon d\'intervention', type: 'select', required: false, options: ['10 km', '20 km', '30 km', '50 km', '100 km', 'Toute la France'] },
+        { id: 'keywords', label: 'Mots-clés que vos clients utilisent pour vous trouver', type: 'textarea', required: false, placeholder: 'Ex: maçon Lyon, entreprise maçonnerie Rhône, extension maison Lyon...' },
+        { id: 'competitors', label: 'Vos concurrents locaux (URLs si possible)', type: 'textarea', required: false, placeholder: 'Ex: www.maconnerie-martin.fr, ...' },
+      ],
+    },
+    {
+      id: 'projects',
+      key: 'projects',
+      title: 'Vos réalisations',
+      icon: '🏗️',
+      description: 'Présentez vos projets phares pour alimenter votre site',
+      fields: [
+        { id: 'projects_list', label: 'Décrivez vos 3 à 5 projets les plus représentatifs', type: 'textarea', required: false, placeholder: 'Projet 1 : Extension maison 60m² à Lyon 6e, durée 4 mois, budget 80K€...' },
+      ],
+    },
+    {
+      id: 'photos',
+      key: 'photos',
+      title: 'Photos & Médias',
+      icon: '📸',
+      description: 'Envoyez vos photos de chantiers, logo et visuels',
+      fields: [
+        { id: 'photos_upload', label: 'Photos de chantiers', type: 'file', required: false, help: 'Formats acceptés : JPG, PNG, WebP. Max 10 Mo par photo.' },
+        { id: 'logo_upload', label: 'Logo de l\'entreprise', type: 'file', required: false, help: 'Format vectoriel (SVG, AI, PDF) ou PNG haute résolution' },
+        { id: 'has_logo', label: 'Avez-vous un logo professionnel ?', type: 'checkbox', required: false },
+        { id: 'needs_logo', label: 'Souhaitez-vous qu\'on crée votre logo ?', type: 'checkbox', required: false },
+      ],
+    },
+    {
+      id: 'identity',
+      key: 'identity',
+      title: 'Identité visuelle',
+      icon: '🎨',
+      description: 'Vos couleurs et style graphique',
+      fields: [
+        { id: 'color1', label: 'Couleur principale', type: 'text', required: false, placeholder: 'Ex: #2563EB ou Bleu marine' },
+        { id: 'color2', label: 'Couleur secondaire', type: 'text', required: false, placeholder: 'Ex: #F97316 ou Orange' },
+        { id: 'style', label: 'Style souhaité', type: 'select', required: false, options: ['Sobre et professionnel', 'Moderne et dynamique', 'Artisanal et authentique', 'Luxe et haut de gamme'] },
+        { id: 'inspiration', label: 'Sites que vous aimez (URLs)', type: 'textarea', required: false, placeholder: 'https://...' },
+      ],
+    },
+    {
+      id: 'objectives',
+      key: 'objectives',
+      title: 'Objectifs du site',
+      icon: '🎯',
+      description: 'Que voulez-vous accomplir avec votre nouveau site ?',
+      fields: [
+        {
+          id: 'selected',
+          label: 'Objectifs principaux',
+          type: 'multiselect',
+          required: true,
+          options: [
+            'Générer des devis en ligne', 'Améliorer mon référencement Google',
+            'Présenter mes réalisations', 'Renforcer ma crédibilité',
+            'Être trouvé sur Google Maps', 'Recruter des collaborateurs',
+            'Attirer une clientèle plus haut de gamme', 'Développer une nouvelle zone géographique',
+          ],
+        },
+        { id: 'main_message', label: 'Votre message principal aux visiteurs', type: 'textarea', required: false, placeholder: 'Ex: Artisan maçon depuis 20 ans, qualité garantie...' },
+      ],
+    },
+    {
+      id: 'goals',
+      key: 'goals',
+      title: 'Budget & Délais',
+      icon: '💰',
+      description: 'Vos contraintes pratiques',
+      fields: [
+        { id: 'current_site', label: 'Avez-vous un site actuel ?', type: 'text', required: false, placeholder: 'www.monsite.fr ou Non' },
+        { id: 'dislikes', label: 'Ce qui ne vous plaît pas dans votre site actuel', type: 'textarea', required: false, placeholder: 'Ex: Trop vieux, pas mobile, pas bien référencé...' },
+        { id: 'budget', label: 'Budget envisagé', type: 'select', required: false, options: ['< 1500€', '1500-3000€', '3000-5000€', '5000-10000€', '> 10000€'] },
+        { id: 'timeline', label: 'Délai souhaité', type: 'select', required: false, options: ['Le plus vite possible', '1 mois', '2-3 mois', 'Pas de contrainte'] },
+        { id: 'additional', label: 'Informations complémentaires', type: 'textarea', required: false, placeholder: 'Tout ce qui pourrait nous aider...' },
+      ],
+    },
+  ],
+}
+
+export const DEFAULT_PROJECT_STEPS = [
+  { step_key: 'onboarding', step_name: 'Onboarding', step_icon: '📋', order_index: 0, requires_approval: false },
+  { step_key: 'audit', step_name: 'Audit SEO', step_icon: '🔍', order_index: 1, requires_approval: false },
+  { step_key: 'mockup', step_name: 'Maquette', step_icon: '🎨', order_index: 2, requires_approval: true },
+  { step_key: 'development', step_name: 'Intégration', step_icon: '💻', order_index: 3, requires_approval: false },
+  { step_key: 'content', step_name: 'Contenu & SEO', step_icon: '✍️', order_index: 4, requires_approval: false },
+  { step_key: 'testing', step_name: 'Tests', step_icon: '🧪', order_index: 5, requires_approval: false },
+  { step_key: 'launch', step_name: 'Mise en ligne', step_icon: '🚀', order_index: 6, requires_approval: false },
+  { step_key: 'training', step_name: 'Formation', step_icon: '📚', order_index: 7, requires_approval: false },
+]

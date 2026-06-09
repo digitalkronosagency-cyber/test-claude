@@ -45,17 +45,25 @@ jobs:
           VT=$(echo dmNwXzNGU0ppUFk5ZmtmRmQ4bU5IUG5Ga3lid3VSRjhwWWFxWDU0U0pPY2NqUkdrcVF0UkIzMWNiYkR5 | base64 -d)
           SRK=$(echo c2Jfc2VjcmV0X1daYlZaNUNySEVuUVZwenYwUXNmd2dfemMzUVlCdmw= | base64 -d)
           ANK=$(echo c2JfcHVibGlzaGFibGVfQnVDbGNva2ZQajFfNFIyQU51SDA0d18zNXdVYzBpdw== | base64 -d)
-          cd agency-onboarding
 
-          # Link project without building
-          vercel link --yes --token "$VT" 2>/dev/null || true
+          # Get project info from Vercel API
+          PROJECT_JSON=$(curl -s "https://api.vercel.com/v9/projects/test-claude" \
+            -H "Authorization: Bearer $VT")
+          echo "Project JSON: $PROJECT_JSON"
+          PROJECT_ID=$(echo "$PROJECT_JSON" | python3 -c "import sys,json; print(json.load(sys.stdin)['id'])")
+          ORG_ID=$(echo "$PROJECT_JSON" | python3 -c "import sys,json; print(json.load(sys.stdin)['accountId'])")
+          echo "Project ID: $PROJECT_ID"
 
           # Clear rootDirectory so Vercel builds from the root of uploaded files
-          PROJECT_ID=$(cat .vercel/project.json | python3 -c "import sys,json; print(json.load(sys.stdin)['projectId'])")
           curl -s -X PATCH "https://api.vercel.com/v9/projects/$PROJECT_ID" \
             -H "Authorization: Bearer $VT" \
             -H "Content-Type: application/json" \
-            -d '{"rootDirectory": null}' > /dev/null
+            -d '{"rootDirectory": null}'
+
+          # Create .vercel/project.json to link to the project
+          cd agency-onboarding
+          mkdir -p .vercel
+          echo "{\"projectId\":\"$PROJECT_ID\",\"orgId\":\"$ORG_ID\"}" > .vercel/project.json
 
           # Set all env vars (ignore errors if already set)
           echo "https://ttsjicsjrpcjibsylctq.supabase.co" | vercel env add NEXT_PUBLIC_SUPABASE_URL production --token "$VT" --yes 2>/dev/null || true

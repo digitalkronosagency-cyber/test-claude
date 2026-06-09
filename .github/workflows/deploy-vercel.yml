@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - claude/epic-edison-o4n2jw
-      - main
+  workflow_dispatch:
 
 jobs:
   deploy:
@@ -21,19 +21,27 @@ jobs:
 
       - name: Deploy to Vercel
         working-directory: agency-onboarding
-        run: |
-          vercel deploy --prod --yes \
-            --env ADMIN_EMAIL="admin@digitalkronosagency.com" \
-            --env ADMIN_PASSWORD="Admin2024!" \
-            --env JWT_SECRET="digitalkronosagency-prod-secret-$(openssl rand -hex 16)" \
-            --env NEXT_PUBLIC_APP_URL="https://digitalkronosagency.vercel.app" \
-            --env RESEND_API_KEY="" \
-            --env NEXT_PUBLIC_SUPABASE_URL="" \
-            --env NEXT_PUBLIC_SUPABASE_ANON_KEY="" \
-            --env SUPABASE_SERVICE_ROLE_KEY="" \
-            --name digitalkronosagency-onboarding \
-            --token $VERCEL_TOKEN 2>&1 | tee /tmp/vercel-output.txt
-          # Extract and display the deployment URL
-          grep -E 'https://.*vercel.app' /tmp/vercel-output.txt || true
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          vercel deploy --prod --yes \
+            --name digitalkronosagency-onboarding \
+            --token "${VERCEL_TOKEN}" 2>&1 | tee /tmp/deploy.log
+          echo "=== DEPLOYMENT URL ==="
+          grep -oE 'https://[a-z0-9-]+\.vercel\.app' /tmp/deploy.log | tail -1 || grep 'https://' /tmp/deploy.log | tail -3
+
+      - name: Set environment variables
+        working-directory: agency-onboarding
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          PROJECT_ID=$(cat .vercel/project.json | grep -o '"projectId":"[^"]*"' | cut -d'"' -f4 2>/dev/null || echo "")
+          if [ -n "$PROJECT_ID" ]; then
+            DEPLOYMENT_URL=$(grep -oE 'https://[a-z0-9-]+\.vercel\.app' /tmp/deploy.log | tail -1)
+            vercel env add ADMIN_EMAIL production --token "${VERCEL_TOKEN}" <<< "admin@digitalkronosagency.com" 2>/dev/null || true
+            vercel env add ADMIN_PASSWORD production --token "${VERCEL_TOKEN}" <<< "Admin2024!" 2>/dev/null || true
+            vercel env add JWT_SECRET production --token "${VERCEL_TOKEN}" <<< "dka-prod-secret-$(date +%s)" 2>/dev/null || true
+            vercel env add NEXT_PUBLIC_APP_URL production --token "${VERCEL_TOKEN}" <<< "${DEPLOYMENT_URL}" 2>/dev/null || true
+            echo "Env vars set. Redeploying..."
+            vercel deploy --prod --yes --token "${VERCEL_TOKEN}" 2>&1 | tail -5
+          fi

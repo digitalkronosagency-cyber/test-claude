@@ -40,14 +40,25 @@ jobs:
       - name: Install Vercel CLI
         run: npm install -g vercel@latest
 
-      - name: Set env vars and deploy
+      - name: Install dependencies and build
+        working-directory: agency-onboarding
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: https://ttsjicsjrpcjibsylctq.supabase.co
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ 'c2JfcHVibGlzaGFibGVfQnVDbGNva2ZQajFfNFIyQU51SDA0d18zNXdVYzBpdw==' }}
+          NEXT_PUBLIC_APP_URL: https://digitalkronosagency-onboarding.vercel.app
+        run: |
+          ANK=$(echo c2JfcHVibGlzaGFibGVfQnVDbGNva2ZQajFfNFIyQU51SDA0d18zNXdVYzBpdw== | base64 -d)
+          export NEXT_PUBLIC_SUPABASE_ANON_KEY="$ANK"
+          npm ci
+          npm run build
+
+      - name: Set env vars and deploy prebuilt
         run: |
           VT=$(echo dmNwXzNGU0ppUFk5ZmtmRmQ4bU5IUG5Ga3lid3VSRjhwWWFxWDU0U0pPY2NqUkdrcVF0UkIzMWNiYkR5 | base64 -d)
           SRK=$(echo c2Jfc2VjcmV0X1daYlZaNUNySEVuUVZwenYwUXNmd2dfemMzUVlCdmw= | base64 -d)
           ANK=$(echo c2JfcHVibGlzaGFibGVfQnVDbGNva2ZQajFfNFIyQU51SDA0d18zNXdVYzBpdw== | base64 -d)
 
           echo "=== Step 1: Getting Vercel project info ==="
-          # Get project info from Vercel API
           PROJECT_JSON=$(curl -s "https://api.vercel.com/v9/projects/test-claude" \
             -H "Authorization: Bearer $VT")
           echo "Project info received"
@@ -56,7 +67,6 @@ jobs:
           echo "Project ID: $PROJECT_ID"
 
           echo "=== Step 2: Clearing rootDirectory ==="
-          # Clear rootDirectory so Vercel builds from the root of uploaded files
           curl -s -X PATCH "https://api.vercel.com/v9/projects/$PROJECT_ID" \
             -H "Authorization: Bearer $VT" \
             -H "Content-Type: application/json" \
@@ -93,8 +103,8 @@ jobs:
           echo "{\"projectId\":\"$PROJECT_ID\",\"orgId\":\"$ORG_ID\"}" > .vercel/project.json
           echo "Project JSON: $(cat .vercel/project.json)"
 
-          vercel deploy --prod --yes --no-wait --token "$VT"
-          echo "✓ Deployment queued on Vercel — build continues on Vercel servers"
+          vercel deploy --prebuilt --prod --yes --token "$VT"
+          echo "✓ Deployed successfully"
 
           echo "============================================"
           echo "LIVE URL: https://digitalkronosagency-onboarding.vercel.app"

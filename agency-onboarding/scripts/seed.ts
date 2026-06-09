@@ -1,13 +1,16 @@
-import { createClient } from '@supabase/supabase-js'
-import { DEFAULT_PROJECT_STEPS, DEFAULT_FORM_CONFIG } from '../lib/default-form-config'
+import { createClient, createMessage, upsertResponse } from '../lib/db-helpers'
+import { DEFAULT_PROJECT_STEPS } from '../lib/default-form-config'
+import { getDb } from '../lib/db'
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-)
+async function seed() {
+  const db = getDb()
 
-const SEED_CLIENTS = [
-  {
+  // Clear existing data
+  db.exec('DELETE FROM messages; DELETE FROM onboarding_responses; DELETE FROM project_steps; DELETE FROM clients;')
+  console.log('🗑️  Données existantes supprimées\n')
+
+  // ── Client 1: Dupont Maçonnerie (invitation envoyée, formulaire vide) ──
+  const dupont = createClient({
     company_name: 'Dupont Maçonnerie',
     contact_name: 'Jean Dupont',
     email: 'jean.dupont@dupont-maconnerie.fr',
@@ -16,9 +19,12 @@ const SEED_CLIENTS = [
     region: 'Auvergne-Rhône-Alpes',
     revenue_range: '500K-1M€',
     status: 'invited',
-    delivery_date: '2024-04-01',
-  },
-  {
+    delivery_date: '2024-06-01',
+  }) as Record<string, unknown>
+  console.log(`✓ Dupont Maçonnerie → /client/${dupont.invite_token}`)
+
+  // ── Client 2: Martin Plomberie (onboarding 70% complété) ──
+  const martin = createClient({
     company_name: 'Martin Plomberie',
     contact_name: 'Pierre Martin',
     email: 'p.martin@martin-plomberie.fr',
@@ -27,9 +33,60 @@ const SEED_CLIENTS = [
     region: 'Nouvelle-Aquitaine',
     revenue_range: '1M-5M€',
     status: 'onboarding',
-    delivery_date: '2024-03-15',
-  },
-  {
+    delivery_date: '2024-04-15',
+  }) as Record<string, unknown>
+
+  // Add partial responses
+  upsertResponse(martin.id as string, 'company', {
+    company_name: 'Martin Plomberie',
+    contact_name: 'Pierre Martin',
+    email: 'p.martin@martin-plomberie.fr',
+    phone: '06 98 76 54 32',
+    city: 'Bordeaux',
+    region: 'Nouvelle-Aquitaine',
+    founded: '2008',
+    employees: '6-20',
+    revenue_range: '1M-5M€',
+  }, true)
+
+  upsertResponse(martin.id as string, 'activities', {
+    selected: ['Plomberie', 'Chauffage', 'Climatisation'],
+    speciality: 'Spécialiste installation PAC et systèmes solaires',
+  }, true)
+
+  upsertResponse(martin.id as string, 'certifications', {
+    selected: ["RGE (Reconnu Garant de l'Environnement)", 'QualiPAC', 'QualiSol'],
+  }, true)
+
+  upsertResponse(martin.id as string, 'seo', {
+    city_main: 'Bordeaux',
+    cities_secondary: 'Mérignac, Pessac, Talence',
+    radius: '30 km',
+    keywords: 'plombier bordeaux, installation pompe à chaleur bordeaux',
+  }, true)
+
+  upsertResponse(martin.id as string, 'goals', {
+    current_site: 'www.martin-plomberie-bordeaux.fr',
+    dislikes: 'Site trop vieux, pas responsive, mal référencé',
+    budget: '3000-5000€',
+    timeline: '2-3 mois',
+  }, false)
+
+  // Update step 1 to done
+  const martinSteps = db.prepare('SELECT * FROM project_steps WHERE client_id = ? ORDER BY order_index').all(martin.id as string) as { id: string }[]
+  if (martinSteps[0]) db.prepare("UPDATE project_steps SET status = 'done', completed_at = datetime('now') WHERE id = ?").run(martinSteps[0].id)
+  if (martinSteps[1]) db.prepare("UPDATE project_steps SET status = 'in_progress', client_message = ? WHERE id = ?").run(
+    "Nous analysons votre site actuel et préparons les recommandations SEO. Résultats d'ici 3 jours.",
+    martinSteps[1].id
+  )
+
+  createMessage(martin.id as string, 'admin', "Bonjour Pierre, j'ai bien reçu vos premières informations. Pouvez-vous compléter la section \"Objectifs\" ?")
+  createMessage(martin.id as string, 'client', "Bonjour ! Bien sûr, je complète ça aujourd'hui. Merci pour le suivi !")
+
+  console.log(`✓ Martin Plomberie → /client/${martin.invite_token}`)
+
+  // ── Client 3: Roux Construction (site livré, toutes étapes terminées) ──
+  const roux = createClient({
     company_name: 'Roux Construction',
     contact_name: 'Marc Roux',
     email: 'm.roux@roux-construction.fr',
@@ -39,141 +96,21 @@ const SEED_CLIENTS = [
     revenue_range: '5M-20M€',
     status: 'delivered',
     delivery_date: '2024-01-15',
-  },
-]
+  }) as Record<string, unknown>
 
-const MARTIN_RESPONSES = [
-  {
-    section_key: 'company',
-    data: {
-      company_name: 'Martin Plomberie',
-      contact_name: 'Pierre Martin',
-      email: 'p.martin@martin-plomberie.fr',
-      phone: '06 98 76 54 32',
-      city: 'Bordeaux',
-      region: 'Nouvelle-Aquitaine',
-      founded: '2008',
-      employees: '6-20',
-      revenue_range: '1M-5M€',
-    },
-    completed: true,
-  },
-  {
-    section_key: 'activities',
-    data: {
-      selected: ['Plomberie', 'Chauffage', 'Climatisation'],
-      speciality: 'Spécialiste installation systèmes solaires et pompes à chaleur',
-    },
-    completed: true,
-  },
-  {
-    section_key: 'certifications',
-    data: {
-      selected: ['RGE (Reconnu Garant de l\'Environnement)', 'QualiPAC', 'QualiSol'],
-    },
-    completed: true,
-  },
-  {
-    section_key: 'seo',
-    data: {
-      city_main: 'Bordeaux',
-      cities_secondary: ['Mérignac', 'Pessac', 'Talence', 'Bègles'],
-      radius: '30 km',
-      keywords: 'plombier bordeaux, installation pompe à chaleur bordeaux, plomberie rge bordeaux',
-      competitors: 'plomberie-dupuis-bordeaux.fr, martin-plomberie33.fr',
-    },
-    completed: true,
-  },
-  {
-    section_key: 'goals',
-    data: {
-      current_site: 'www.martin-plomberie-bordeaux.fr (fait en 2015)',
-      dislikes: 'Site trop vieux, pas responsive, pas bien référencé sur Google, design dépassé',
-      budget: '3000-5000€',
-      timeline: '2-3 mois',
-    },
-    completed: false,
-  },
-]
+  // Mark all steps done
+  db.prepare("UPDATE project_steps SET status = 'done', completed_at = datetime('now') WHERE client_id = ?").run(roux.id as string)
+  createMessage(roux.id as string, 'admin', '🎉 Votre site est en ligne ! Félicitations pour ce beau projet.')
+  createMessage(roux.id as string, 'client', 'Merci pour le travail exceptionnel ! Notre trafic a déjà augmenté de 40%.')
 
-async function seed() {
-  console.log('🌱 Seeding database...')
+  console.log(`✓ Roux Construction → /client/${roux.invite_token}`)
 
-  // Insert form config
-  await supabase.from('form_config').upsert({
-    id: 1,
-    config: DEFAULT_FORM_CONFIG,
-    updated_at: new Date().toISOString(),
-  })
-  console.log('✓ Form config created')
-
-  for (const clientData of SEED_CLIENTS) {
-    // Create client
-    const { data: client, error } = await supabase
-      .from('clients')
-      .insert(clientData)
-      .select()
-      .single()
-
-    if (error) {
-      console.error(`✗ Error creating ${clientData.company_name}:`, error.message)
-      continue
-    }
-
-    console.log(`✓ Client created: ${client.company_name} (token: ${client.invite_token})`)
-
-    // Create project steps
-    const steps = DEFAULT_PROJECT_STEPS.map(s => ({
-      ...s,
-      client_id: client.id,
-      status: clientData.status === 'delivered' ? 'done' : 'todo',
-    }))
-
-    if (clientData.status === 'onboarding') {
-      steps[0].status = 'done'
-      steps[1].status = 'in_progress'
-    }
-
-    await supabase.from('project_steps').insert(steps)
-
-    // Add responses for Martin Plomberie
-    if (clientData.company_name === 'Martin Plomberie') {
-      for (const response of MARTIN_RESPONSES) {
-        await supabase.from('onboarding_responses').insert({
-          client_id: client.id,
-          ...response,
-          updated_at: new Date().toISOString(),
-        })
-      }
-      console.log('  ✓ Responses added for Martin Plomberie')
-    }
-
-    // Add messages for Martin
-    if (clientData.company_name === 'Martin Plomberie') {
-      await supabase.from('messages').insert([
-        {
-          client_id: client.id,
-          sender: 'admin',
-          content: 'Bonjour Pierre, j\'ai bien reçu vos premières informations. Pouvez-vous compléter la section "Objectifs" pour que je puisse démarrer l\'audit ?',
-          read: true,
-        },
-        {
-          client_id: client.id,
-          sender: 'client',
-          content: 'Bonjour ! Bien sûr, je complète ça aujourd\'hui. Merci pour le suivi !',
-          read: true,
-        },
-      ])
-      console.log('  ✓ Messages added')
-    }
-  }
-
-  console.log('\n🎉 Seed complete!')
-  console.log('\nClients créés :')
-  const { data: clients } = await supabase.from('clients').select('company_name, invite_token, status')
-  clients?.forEach(c => {
-    console.log(`  - ${c.company_name} (${c.status}) → /client/${c.invite_token}`)
-  })
+  console.log('\n🎉 Seed terminé !\n')
+  console.log('─────────────────────────────────────────────────')
+  console.log('  Admin:     http://localhost:3000/admin/login')
+  console.log('  Email:     admin@digitalkronosagency.com')
+  console.log('  Password:  admin123')
+  console.log('─────────────────────────────────────────────────\n')
 }
 
 seed().catch(console.error)

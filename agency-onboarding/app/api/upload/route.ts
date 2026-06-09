@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getClientSession, getAdminSession } from '@/lib/auth'
-import { supabaseAdmin } from '@/lib/supabase'
+import { createSharedFile } from '@/lib/db-helpers'
+import { writeFile, mkdir } from 'fs/promises'
+import path from 'path'
+import { randomUUID } from 'crypto'
 
 export async function POST(req: NextRequest) {
   const clientSession = await getClientSession()
@@ -12,37 +15,34 @@ export async function POST(req: NextRequest) {
 
   const formData = await req.formData()
   const file = formData.get('file') as File
-  const bucket = formData.get('bucket') as string || 'client-photos'
+  const bucket = (formData.get('bucket') as string) || 'client-photos'
   const clientId = clientSession?.clientId || (formData.get('clientId') as string)
 
   if (!file || !clientId) {
     return NextResponse.json({ error: 'Fichier ou client manquant' }, { status: 400 })
   }
 
-  const ext = file.name.split('.').pop()
-  const filename = `${clientId}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
+  const ext = file.name.split('.').pop() || 'bin'
+  const filename = `${randomUUID()}.${ext}`
+  const uploadDir = path.join(process.cwd(), 'public', 'uploads', bucket, clientId)
 
-  const arrayBuffer = await file.arrayBuffer()
-  const { error: uploadError } = await supabaseAdmin.storage
-    .from(bucket)
-    .upload(filename, arrayBuffer, { contentType: file.type })
+  await mkdir(uploadDir, { recursive: true })
+  const buffer = Buffer.from(await file.arrayBuffer())
+  await writeFile(path.join(uploadDir, filename), buffer)
 
-  if (uploadError) return NextResponse.json({ error: uploadError.message }, { status: 500 })
+  const storagePath = `/uploads/${bucket}/${clientId}/${filename}`
 
-  // Save to shared_files if it's a shared file
   if (bucket === 'shared-files' && adminSession) {
-    await supabaseAdmin.from('shared_files').insert({
+    createSharedFile({
       client_id: clientId,
       filename,
       original_name: file.name,
-      storage_path: filename,
+      storage_path: storagePath,
       file_type: file.type,
       size_bytes: file.size,
       uploaded_by: 'admin',
     })
   }
 
-  const { data: { publicUrl } } = supabaseAdmin.storage.from(bucket).getPublicUrl(filename)
-
-  return NextResponse.json({ path: filename, url: publicUrl, name: file.name })
+  return NextResponse.json({ path: storagePath, url: storagePath, name: file.name })
 }

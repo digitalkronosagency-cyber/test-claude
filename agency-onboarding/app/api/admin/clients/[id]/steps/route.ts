@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getAdminSession } from '@/lib/auth'
-import { supabaseAdmin } from '@/lib/supabase'
+import { updateStep, getClientById } from '@/lib/db-helpers'
 import { sendStatusUpdateEmail } from '@/lib/emails'
 
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
@@ -14,37 +14,23 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   if (status !== undefined) updateData.status = status
   if (admin_notes !== undefined) updateData.admin_notes = admin_notes
   if (client_message !== undefined) updateData.client_message = client_message
-  if (requires_approval !== undefined) updateData.requires_approval = requires_approval
+  if (requires_approval !== undefined) updateData.requires_approval = requires_approval ? 1 : 0
   if (estimated_date !== undefined) updateData.estimated_date = estimated_date
   if (status === 'done') updateData.completed_at = new Date().toISOString()
 
-  const { data, error } = await supabaseAdmin
-    .from('project_steps')
-    .update(updateData)
-    .eq('id', stepId)
-    .eq('client_id', id)
-    .select()
-    .single()
+  const step = updateStep(stepId, id, updateData) as Record<string, unknown>
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
-
-  // Send email if step completed
   if (status === 'done') {
-    const { data: client } = await supabaseAdmin
-      .from('clients')
-      .select('email, company_name, invite_token')
-      .eq('id', id)
-      .single()
-
-    if (client) {
+    const client = getClientById(id) as Record<string, unknown> | null
+    if (client?.email) {
       await sendStatusUpdateEmail({
-        to: client.email,
-        companyName: client.company_name,
-        stepName: data.step_name,
-        inviteToken: client.invite_token,
+        to: client.email as string,
+        companyName: client.company_name as string,
+        stepName: step?.step_name as string,
+        inviteToken: client.invite_token as string,
       }).catch(console.error)
     }
   }
 
-  return NextResponse.json(data)
+  return NextResponse.json(step)
 }

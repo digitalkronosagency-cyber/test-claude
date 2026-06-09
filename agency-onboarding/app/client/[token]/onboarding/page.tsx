@@ -108,9 +108,9 @@ export default function OnboardingForm() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <header className="bg-[#1a1a2e] text-white px-4 py-4">
+      <header className="bg-[#0a1628] text-white px-4 py-4">
         <div className="max-w-lg mx-auto">
-          <p className="text-orange-500 font-bold">digitalkronosagency</p>
+          <p className="text-[#1a6dff] font-bold">Azure Média</p>
           <div className="flex items-center justify-between mt-2">
             <p className="text-sm text-gray-400">Étape {currentIndex + 1} sur {sections.length}</p>
             {saveStatus !== 'idle' && (
@@ -206,7 +206,7 @@ function FieldRenderer({
           <select
             value={strVal}
             onChange={e => onChange(e.target.value)}
-            className="w-full border rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-orange-500 focus:outline-none"
+            className="w-full border rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-[#1a6dff] focus:outline-none"
           >
             <option value="">Sélectionner...</option>
             {field.options?.map(opt => (
@@ -217,7 +217,7 @@ function FieldRenderer({
         {(field.type === 'multiselect' || field.type === 'checkbox') && (
           <div className="grid grid-cols-2 gap-2">
             {field.options?.map(opt => (
-              <label key={opt} className="flex items-center gap-2 p-2 border rounded-lg cursor-pointer hover:bg-orange-50 transition-colors">
+              <label key={opt} className="flex items-center gap-2 p-2 border rounded-lg cursor-pointer hover:bg-blue-50 transition-colors">
                 <input
                   type="checkbox"
                   checked={arrVal.includes(opt)}
@@ -225,7 +225,7 @@ function FieldRenderer({
                     if (e.target.checked) onChange([...arrVal, opt])
                     else onChange(arrVal.filter(v => v !== opt))
                   }}
-                  className="rounded accent-orange-500"
+                  className="rounded accent-[#1a6dff]"
                 />
                 <span className="text-sm">{opt}</span>
               </label>

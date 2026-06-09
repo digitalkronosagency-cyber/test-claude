@@ -109,12 +109,12 @@ export default function FormEditor() {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
-      <header className="bg-[#1a1a2e] text-white px-6 py-4 flex items-center justify-between">
+      <header className="bg-[#0a1628] text-white px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-4">
           <button onClick={() => router.push('/admin')} className="text-gray-400 hover:text-white">
             <ArrowLeft className="h-5 w-5" />
           </button>
-          <h1 className="text-xl font-bold text-orange-500">Éditeur de formulaire</h1>
+          <h1 className="text-xl font-bold text-[#1a6dff]">Éditeur de formulaire</h1>
         </div>
         <Button onClick={save} disabled={saving}>
           <Save className="h-4 w-4 mr-2" />
@@ -127,7 +127,7 @@ export default function FormEditor() {
         <div className="w-64 bg-white border-r overflow-y-auto p-4">
           <div className="flex items-center justify-between mb-3">
             <h2 className="font-semibold text-sm text-gray-500 uppercase tracking-wide">Sections</h2>
-            <button onClick={addSection} className="text-orange-500 hover:text-orange-600">
+            <button onClick={addSection} className="text-[#1a6dff] hover:text-[#1558d4]">
               <Plus className="h-4 w-4" />
             </button>
           </div>
@@ -137,7 +137,7 @@ export default function FormEditor() {
                 key={section.id}
                 onClick={() => { setSelectedSection(section.id); setSelectedField(null) }}
                 className={`w-full text-left px-3 py-2 rounded-lg text-sm flex items-center gap-2 transition-colors ${
-                  selectedSection === section.id ? 'bg-orange-50 text-orange-700' : 'hover:bg-gray-50'
+                  selectedSection === section.id ? 'bg-blue-50 text-blue-700' : 'hover:bg-gray-50'
                 }`}
               >
                 <GripVertical className="h-3 w-3 text-gray-300 flex-shrink-0" />
@@ -184,7 +184,7 @@ export default function FormEditor() {
                   <Card
                     key={field.id}
                     className={`cursor-pointer transition-all ${
-                      selectedField === field.id ? 'ring-2 ring-orange-500' : ''
+                      selectedField === field.id ? 'ring-2 ring-[#1a6dff]' : ''
                     }`}
                     onClick={() => setSelectedField(field.id)}
                   >

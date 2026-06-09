@@ -37,9 +37,9 @@ export default function ClientDashboardView({
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-[#1a1a2e] text-white px-4 py-5">
+      <header className="bg-[#0a1628] text-white px-4 py-5">
         <div className="max-w-lg mx-auto">
-          <p className="text-orange-500 font-bold text-xl">digitalkronosagency</p>
+          <p className="text-[#1a6dff] font-bold text-xl">Azure Média</p>
           <p className="text-gray-300 mt-1">
             Bonjour {client.contact_name || client.company_name} 👋
           </p>
@@ -53,15 +53,15 @@ export default function ClientDashboardView({
           <CardContent className="p-5">
             <div className="flex items-center justify-between mb-3">
               <h2 className="font-semibold text-gray-900">Avancement du projet</h2>
-              <span className="text-2xl font-bold text-orange-500">{projectCompletion}%</span>
+              <span className="text-2xl font-bold text-[#1a6dff]">{projectCompletion}%</span>
             </div>
             <Progress value={projectCompletion} className="h-3 mb-3" />
             <p className="text-sm text-gray-500 mb-1">{doneCount} étapes sur {steps.length} terminées</p>
 
             {client.delivery_date && (
-              <div className="flex items-center gap-2 mt-3 p-3 bg-orange-50 rounded-lg">
-                <Clock className="h-4 w-4 text-orange-500" />
-                <p className="text-sm text-orange-700">
+              <div className="flex items-center gap-2 mt-3 p-3 bg-blue-50 rounded-lg">
+                <Clock className="h-4 w-4 text-[#1a6dff]" />
+                <p className="text-sm text-blue-700">
                   Livraison prévue le <strong>{format(new Date(client.delivery_date), 'dd MMMM yyyy', { locale: fr })}</strong>
                 </p>
               </div>
@@ -116,7 +116,7 @@ export default function ClientDashboardView({
           <CardContent className="p-5">
             <div className="flex items-center justify-between mb-2">
               <h2 className="font-semibold text-gray-900">Votre dossier</h2>
-              <span className="text-sm font-bold text-orange-500">{formCompletion}%</span>
+              <span className="text-sm font-bold text-[#1a6dff]">{formCompletion}%</span>
             </div>
             <Progress value={formCompletion} className="h-2 mb-3" />
             <p className="text-sm text-gray-500 mb-3">

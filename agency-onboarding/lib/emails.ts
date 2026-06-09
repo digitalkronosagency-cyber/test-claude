@@ -29,7 +29,7 @@ export async function sendInvitationEmail(params: {
     `${params.companyName} — Votre espace projet est prêt`,
     `<p>Bonjour ${params.contactName || params.companyName},</p>
      <p>Accédez à votre espace : <a href="${link}">${link}</a></p>
-     <p>digitalkronosagency</p>`
+     <p>Azure Média</p>`
   )
 }
 
@@ -39,7 +39,7 @@ export async function sendFormCompletedEmail(params: {
 }) {
   const link = `${APP_URL}/admin/clients/${params.clientId}`
   return sendEmail(
-    process.env.ADMIN_EMAIL || 'admin@digitalkronosagency.com',
+    process.env.ADMIN_EMAIL || 'admin@Azure Média.com',
     `🎉 ${params.companyName} a complété son formulaire`,
     `<p><strong>${params.companyName}</strong> a finalisé son formulaire.</p>
      <p><a href="${link}">Voir la fiche client</a></p>`

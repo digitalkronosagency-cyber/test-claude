@@ -5,8 +5,8 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "digitalkronosagency — Espace Projet",
-  description: "Plateforme de suivi de projets web pour clients BTP",
+  title: "Azure Média — Espace Projet",
+  description: "Plateforme de suivi de projets digitaux",
 };
 
 export default function RootLayout({

@@ -53,12 +53,12 @@ export default function ApprovePage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <header className="bg-[#1a1a2e] text-white px-4 py-4">
+      <header className="bg-[#0a1628] text-white px-4 py-4">
         <div className="max-w-lg mx-auto flex items-center gap-3">
           <Link href={`/client/${token}`} className="text-gray-400 hover:text-white">
             <ArrowLeft className="h-5 w-5" />
           </Link>
-          <p className="text-orange-500 font-bold">digitalkronosagency</p>
+          <p className="text-[#1a6dff] font-bold">Azure Média</p>
         </div>
       </header>
 

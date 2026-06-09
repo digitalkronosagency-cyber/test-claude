@@ -53,13 +53,13 @@ export default function MessagesPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
-      <header className="bg-[#1a1a2e] text-white px-4 py-4">
+      <header className="bg-[#0a1628] text-white px-4 py-4">
         <div className="max-w-lg mx-auto flex items-center gap-3">
           <Link href={`/client/${token}`} className="text-gray-400 hover:text-white">
             <ArrowLeft className="h-5 w-5" />
           </Link>
           <div>
-            <p className="text-orange-500 font-bold">digitalkronosagency</p>
+            <p className="text-[#1a6dff] font-bold">Azure Média</p>
             <p className="text-gray-400 text-sm">Messages</p>
           </div>
         </div>
@@ -79,14 +79,14 @@ export default function MessagesPage() {
               <div key={msg.id} className={`flex ${msg.sender === 'client' ? 'justify-end' : 'justify-start'}`}>
                 <div className={`max-w-xs px-4 py-3 rounded-2xl text-sm ${
                   msg.sender === 'client'
-                    ? 'bg-orange-500 text-white'
+                    ? 'bg-[#1a6dff] text-white'
                     : 'bg-white text-gray-900 shadow-sm border'
                 }`}>
                   {msg.sender === 'admin' && (
-                    <p className="text-xs font-semibold mb-1 text-orange-500">digitalkronosagency</p>
+                    <p className="text-xs font-semibold mb-1 text-[#1a6dff]">Azure Média</p>
                   )}
                   <p>{msg.content}</p>
-                  <p className={`text-xs mt-1 ${msg.sender === 'client' ? 'text-orange-200' : 'text-gray-400'}`}>
+                  <p className={`text-xs mt-1 ${msg.sender === 'client' ? 'text-blue-200' : 'text-gray-400'}`}>
                     {format(new Date(msg.created_at), "dd/MM à HH'h'mm", { locale: fr })}
                   </p>
                 </div>

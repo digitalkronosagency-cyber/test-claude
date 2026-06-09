@@ -97,8 +97,8 @@ export default function AdminDashboard() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-[#1a1a2e] text-white px-6 py-4 flex items-center justify-between">
-        <h1 className="text-xl font-bold text-orange-500">digitalkronosagency</h1>
+      <header className="bg-[#0a1628] text-white px-6 py-4 flex items-center justify-between">
+        <h1 className="text-xl font-bold text-[#1a6dff]">Azure Média</h1>
         <div className="flex items-center gap-4">
           <Link href="/admin/form-editor" className="text-sm text-gray-300 hover:text-white">
             Éditeur formulaire
@@ -114,7 +114,7 @@ export default function AdminDashboard() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           <Card>
             <CardContent className="p-4 flex items-center gap-3">
-              <Users className="h-8 w-8 text-orange-500" />
+              <Users className="h-8 w-8 text-[#1a6dff]" />
               <div>
                 <p className="text-2xl font-bold">{stats.total}</p>
                 <p className="text-xs text-gray-500">Total clients</p>

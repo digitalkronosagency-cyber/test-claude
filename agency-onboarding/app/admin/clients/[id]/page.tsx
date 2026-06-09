@@ -102,12 +102,12 @@ export default function ClientDetail() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <header className="bg-[#1a1a2e] text-white px-6 py-4 flex items-center justify-between">
+      <header className="bg-[#0a1628] text-white px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-4">
           <button onClick={() => router.push('/admin')} className="text-gray-400 hover:text-white">
             <ArrowLeft className="h-5 w-5" />
           </button>
-          <h1 className="text-xl font-bold text-orange-500">{client.company_name}</h1>
+          <h1 className="text-xl font-bold text-[#1a6dff]">{client.company_name}</h1>
           <span className="text-gray-400 text-sm">{client.city}</span>
         </div>
         <div className="flex items-center gap-2">
@@ -141,7 +141,7 @@ export default function ClientDetail() {
             <div>
               <span className="text-gray-500">Lien client:</span>{' '}
               <button
-                className="text-orange-500 hover:underline"
+                className="text-[#1a6dff] hover:underline"
                 onClick={() => navigator.clipboard.writeText(`${window.location.origin}/client/${client.invite_token}`)}
               >
                 Copier le lien
@@ -207,7 +207,7 @@ export default function ClientDetail() {
                       <div key={msg.id} className={`flex ${msg.sender === 'admin' ? 'justify-end' : 'justify-start'}`}>
                         <div className={`max-w-xs px-4 py-2 rounded-2xl text-sm ${
                           msg.sender === 'admin'
-                            ? 'bg-orange-500 text-white'
+                            ? 'bg-[#1a6dff] text-white'
                             : 'bg-gray-200 text-gray-900'
                         }`}>
                           {msg.content}

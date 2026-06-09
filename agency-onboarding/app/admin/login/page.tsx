@@ -34,30 +34,30 @@ export default function AdminLogin() {
   }
 
   return (
-    <div className="min-h-screen bg-[#1a1a2e] flex items-center justify-center p-4">
+    <div className="min-h-screen bg-[#0a1628] flex items-center justify-center p-4">
       <Card className="w-full max-w-md">
         <CardHeader>
           <div className="text-center mb-2">
-            <h1 className="text-2xl font-bold text-orange-500">digitalkronosagency</h1>
-            <p className="text-sm text-gray-500">Espace Administrateur</p>
+            <h1 className="text-2xl font-bold text-[#1a6dff]">Azure Média</h1>
+            <p className="text-sm text-gray-700">Espace Administrateur</p>
           </div>
-          <CardTitle>Connexion</CardTitle>
+          <CardTitle className="text-gray-900">Connexion</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email" className="text-gray-900">Email</Label>
               <Input
                 id="email"
                 type="email"
                 value={email}
                 onChange={e => setEmail(e.target.value)}
-                placeholder="admin@digitalkronosagency.com"
+                placeholder="admin@azuremedia.fr"
                 required
               />
             </div>
             <div>
-              <Label htmlFor="password">Mot de passe</Label>
+              <Label htmlFor="password" className="text-gray-900">Mot de passe</Label>
               <Input
                 id="password"
                 type="password"
@@ -67,7 +67,7 @@ export default function AdminLogin() {
               />
             </div>
             {error && <p className="text-red-500 text-sm">{error}</p>}
-            <Button type="submit" className="w-full" disabled={loading}>
+            <Button type="submit" className="w-full bg-[#1a6dff] hover:bg-[#1558d4] text-white" disabled={loading}>
               {loading ? 'Connexion...' : 'Se connecter'}
             </Button>
           </form>

@@ -40,13 +40,13 @@ export default function FilesPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <header className="bg-[#1a1a2e] text-white px-4 py-4">
+      <header className="bg-[#0a1628] text-white px-4 py-4">
         <div className="max-w-lg mx-auto flex items-center gap-3">
           <Link href={`/client/${token}`} className="text-gray-400 hover:text-white">
             <ArrowLeft className="h-5 w-5" />
           </Link>
           <div>
-            <p className="text-orange-500 font-bold">digitalkronosagency</p>
+            <p className="text-[#1a6dff] font-bold">Azure Média</p>
             <p className="text-gray-400 text-sm">Documents partagés</p>
           </div>
         </div>
@@ -76,7 +76,7 @@ export default function FilesPage() {
                   </div>
                   <a
                     href={`/api/download?path=${file.storage_path}&bucket=shared-files`}
-                    className="text-orange-500 hover:text-orange-600"
+                    className="text-[#1a6dff] hover:text-[#1558d4]"
                     download={file.original_name}
                   >
                     <Download className="h-5 w-5" />

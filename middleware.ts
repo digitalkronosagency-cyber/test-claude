@@ -2,29 +2,29 @@ import { NextResponse, type NextRequest } from "next/server";
 import { updateSupabaseSession } from "@/lib/supabase/middleware";
 import { createServerClient } from "@supabase/ssr";
 
+function makeClient(request: NextRequest) {
+  return createServerClient(
+    process.env.SUPABASE_URL!,
+    process.env.SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll: () => request.cookies.getAll(),
+        setAll: () => {},
+      },
+    }
+  );
+}
+
 export async function middleware(request: NextRequest) {
   const response = await updateSupabaseSession(request);
   const { pathname } = request.nextUrl;
 
-  // Routes publiques dans /espace-client (pas de protection)
-  const PUBLIC_EC = ["/espace-client/connexion"];
-  const isEspaceClient = pathname.startsWith("/espace-client");
-  const isPublicEc = PUBLIC_EC.some((p) => pathname.startsWith(p));
-
-  if (isEspaceClient && !isPublicEc) {
-    // Vérifier la session
-    const supabase = createServerClient(
-      process.env.SUPABASE_URL!,
-      process.env.SUPABASE_ANON_KEY!,
-      {
-        cookies: {
-          getAll: () => request.cookies.getAll(),
-          setAll: () => {},
-        },
-      }
-    );
-    const { data: { user } } = await supabase.auth.getUser();
-
+  // ── /espace-client : session requise (sauf /connexion) ──────────────────
+  if (
+    pathname.startsWith("/espace-client") &&
+    !pathname.startsWith("/espace-client/connexion")
+  ) {
+    const { data: { user } } = await makeClient(request).auth.getUser();
     if (!user) {
       const url = request.nextUrl.clone();
       url.pathname = "/espace-client/connexion";
@@ -33,23 +33,28 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  // Déjà connectée → redirige depuis /connexion vers tableau-de-bord
+  // Déjà connectée → /espace-client/connexion redirige vers tableau-de-bord
   if (pathname.startsWith("/espace-client/connexion")) {
-    const supabase = createServerClient(
-      process.env.SUPABASE_URL!,
-      process.env.SUPABASE_ANON_KEY!,
-      {
-        cookies: {
-          getAll: () => request.cookies.getAll(),
-          setAll: () => {},
-        },
-      }
-    );
-    const { data: { user } } = await supabase.auth.getUser();
+    const { data: { user } } = await makeClient(request).auth.getUser();
     if (user) {
       const url = request.nextUrl.clone();
       url.pathname = "/espace-client/tableau-de-bord";
       url.search = "";
+      return NextResponse.redirect(url);
+    }
+  }
+
+  // ── /admin : session requise (sauf /connexion) ───────────────────────────
+  // La vérification du rôle admin est faite dans app/admin/layout.tsx
+  if (
+    pathname.startsWith("/admin") &&
+    !pathname.startsWith("/admin/connexion")
+  ) {
+    const { data: { user } } = await makeClient(request).auth.getUser();
+    if (!user) {
+      const url = request.nextUrl.clone();
+      url.pathname = "/admin/connexion";
+      url.searchParams.set("redirect", pathname);
       return NextResponse.redirect(url);
     }
   }

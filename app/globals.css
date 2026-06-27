@@ -4,24 +4,46 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #1a1a1a;
+  --color-primary: #D4537E;
+  --color-secondary: #FAF7F5;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
 }
 
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+}
+
+@layer components {
+  .card-hover {
+    @apply transition-all duration-300 ease-out;
+  }
+  .card-hover:hover {
+    @apply -translate-y-1 shadow-xl;
+  }
+  .btn-primary {
+    @apply inline-flex items-center justify-center px-7 py-3 rounded-full text-white font-semibold text-sm tracking-wide transition-all duration-200 hover:opacity-90 hover:scale-[1.02] active:scale-[0.98];
+    background-color: var(--color-primary);
+  }
+  .btn-outline {
+    @apply inline-flex items-center justify-center px-7 py-3 rounded-full font-semibold text-sm tracking-wide border-2 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98];
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+  }
+  .section-title {
+    @apply text-3xl sm:text-4xl font-bold tracking-tight text-balance;
+  }
+  .section-subtitle {
+    @apply text-base text-gray-500 mt-3 max-w-xl mx-auto text-balance;
   }
 }

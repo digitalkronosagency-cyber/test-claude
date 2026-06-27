@@ -1,7 +1,6 @@
 "use server";
 
-import { createSupabaseAdminClient } from "@/lib/supabase/server";
-import { config } from "@/lib/config";
+import { upsertForfait, toggleForfaitActif } from "@/lib/queries/admin";
 import { revalidatePath } from "next/cache";
 
 type ForfaitState = { status: "idle" } | { status: "success" } | { status: "error"; message: string };
@@ -21,24 +20,21 @@ export async function sauvegarderForfaitAction(
   if (seances < 1 || prix < 0 || validite < 1)
     return { status: "error", message: "Valeurs invalides." };
 
-  const db = createSupabaseAdminClient();
-  const payload = { nom, nombre_seances_total: seances, prix, duree_validite_jours: validite };
-
-  const { error } = id
-    ? await db.from("forfaits").update(payload).eq("id", id)
-    : await db.from("forfaits").insert({ ...payload, institut_id: config.institut.id });
-
-  if (error) return { status: "error", message: "Erreur lors de l'enregistrement." };
-  revalidatePath("/admin/forfaits");
-  revalidatePath("/");
-  return { status: "success" };
+  try {
+    await upsertForfait({ id: id || undefined, nom, nombre_seances_total: seances, prix, duree_validite_jours: validite });
+    revalidatePath("/admin/forfaits");
+    revalidatePath("/");
+    return { status: "success" };
+  } catch {
+    return { status: "error", message: "Erreur lors de l'enregistrement." };
+  }
 }
 
 export async function toggleForfaitActifAction(formData: FormData) {
   const id = formData.get("id") as string;
   const actif = formData.get("actif") === "true";
   if (!id) return;
-  await createSupabaseAdminClient().from("forfaits").update({ actif: !actif }).eq("id", id);
+  await toggleForfaitActif(id, !actif);
   revalidatePath("/admin/forfaits");
   revalidatePath("/");
 }

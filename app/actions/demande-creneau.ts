@@ -1,7 +1,6 @@
 "use server";
 
-import { createSupabaseAdminClient } from "@/lib/supabase/server";
-import { config } from "@/lib/config";
+import { insertDemandeCreneau } from "@/lib/queries/admin";
 
 export type DemandeCreneauState =
   | { status: "idle" }
@@ -25,22 +24,9 @@ export async function soumettreDemandeCreneauAction(
   }
 
   try {
-    const supabase = createSupabaseAdminClient();
-    const { error } = await supabase.from("demandes_creneau").insert({
-      institut_id: config.institut.id,
-      nom_demandeur: nom,
-      telephone_demandeur: telephone,
-      disponibilite_souhaitee: disponibilite,
-      statut: "en_attente",
-    });
-
-    if (error) throw error;
+    await insertDemandeCreneau({ nomDemandeur: nom, telephoneDemandeur: telephone, disponibilite });
     return { status: "success" };
-  } catch (err) {
-    console.error("[demande_creneau]", err);
-    return {
-      status: "error",
-      message: "Une erreur est survenue. Merci de réessayer ou de nous appeler directement.",
-    };
+  } catch {
+    return { status: "error", message: "Une erreur est survenue. Merci de réessayer ou de nous appeler directement." };
   }
 }

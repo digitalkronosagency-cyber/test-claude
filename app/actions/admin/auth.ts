@@ -1,8 +1,8 @@
 "use server";
 
-import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { isAdmin } from "@/lib/queries/admin";
 import { redirect } from "next/navigation";
+import { verifyAdminPassword, isAdmin } from "@/lib/queries/admin";
+import { getSession } from "@/lib/session";
 
 export type AdminAuthState = { status: "idle" } | { status: "error"; message: string };
 
@@ -15,23 +15,21 @@ export async function adminConnexionAction(
   if (!email || !password)
     return { status: "error", message: "Email et mot de passe requis." };
 
-  const supabase = createSupabaseServerClient();
-  const { error } = await supabase.auth.signInWithPassword({ email, password });
-  if (error)
-    return { status: "error", message: "Email ou mot de passe incorrect." };
+  const ok = await verifyAdminPassword(email, password);
+  if (!ok) return { status: "error", message: "Email ou mot de passe incorrect." };
 
-  // Vérifier le rôle admin
-  const ok = await isAdmin(email);
-  if (!ok) {
-    await supabase.auth.signOut();
-    return { status: "error", message: "Accès non autorisé. Ce compte n'est pas gérante." };
-  }
+  const admin = await isAdmin(email);
+  if (!admin) return { status: "error", message: "Accès non autorisé. Ce compte n'est pas gérante." };
+
+  const session = await getSession();
+  session.adminEmail = email;
+  await session.save();
 
   redirect("/admin/clientes");
 }
 
 export async function adminDeconnexionAction() {
-  const supabase = createSupabaseServerClient();
-  await supabase.auth.signOut();
+  const session = await getSession();
+  session.destroy();
   redirect("/admin/connexion");
 }

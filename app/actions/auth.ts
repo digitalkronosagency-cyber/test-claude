@@ -1,7 +1,8 @@
 "use server";
 
-import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
+import { verifyClientePassword } from "@/lib/queries/cliente";
+import { getSession } from "@/lib/session";
 
 export type AuthState =
   | { status: "idle" }
@@ -18,25 +19,21 @@ export async function connexionAction(
     return { status: "error", message: "Email et mot de passe requis." };
   }
 
-  const supabase = createSupabaseServerClient();
-  const { error } = await supabase.auth.signInWithPassword({ email, password });
-
-  if (error) {
-    return {
-      status: "error",
-      message:
-        error.message.includes("Invalid")
-          ? "Email ou mot de passe incorrect."
-          : "Connexion impossible. Veuillez réessayer.",
-    };
+  const cliente = await verifyClientePassword(email, password);
+  if (!cliente) {
+    return { status: "error", message: "Email ou mot de passe incorrect." };
   }
 
-  // redirect() doit être appelé hors du try/catch
+  const session = await getSession();
+  session.clienteId = cliente.id;
+  session.clienteEmail = cliente.email ?? email;
+  await session.save();
+
   redirect("/espace-client/tableau-de-bord");
 }
 
 export async function deconnexionAction() {
-  const supabase = createSupabaseServerClient();
-  await supabase.auth.signOut();
+  const session = await getSession();
+  session.destroy();
   redirect("/espace-client/connexion");
 }

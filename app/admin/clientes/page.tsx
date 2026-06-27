@@ -12,17 +12,13 @@ export default async function AdminClientesPage() {
   const raw = await fetchAllClientes();
   const { couleurPrincipale } = config.branding;
 
-  // Enrichir chaque cliente avec des indicateurs résumés
   const clientes = raw.map((c) => {
-    const forfaitsActifs = (c.forfaits_clientes ?? []).filter(
+    const forfaitsActifs = c.forfaits.filter(
       (f) => f.seances_restantes > 0 && joursAvantExpiration(f.date_expiration) >= 0
     );
     const seancesTotales = forfaitsActifs.reduce((s, f) => s + f.seances_restantes, 0);
     const alerteSeances = forfaitsActifs.some((f) => f.seances_restantes <= 1);
-    const alerteExpiration = forfaitsActifs.some((f) => {
-      const j = joursAvantExpiration(f.date_expiration);
-      return j >= 0 && j <= 30;
-    });
+    const alerteExpiration = forfaitsActifs.some((f) => { const j = joursAvantExpiration(f.date_expiration); return j >= 0 && j <= 30; });
     return { ...c, forfaitsActifs: forfaitsActifs.length, seancesTotales, alerteSeances, alerteExpiration };
   });
 
@@ -34,7 +30,6 @@ export default async function AdminClientesPage() {
           <p className="text-sm text-slate-500 mt-0.5">{clientes.length} clientes enregistrées</p>
         </div>
       </div>
-
       <ClientesTable clientes={clientes} couleurPrincipale={couleurPrincipale} />
     </div>
   );

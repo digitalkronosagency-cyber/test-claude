@@ -1,17 +1,13 @@
 "use server";
 
-import { createSupabaseAdminClient } from "@/lib/supabase/server";
+import { updateStatutDemande } from "@/lib/queries/admin";
 import { revalidatePath } from "next/cache";
 
 export async function updateStatutDemandeAction(formData: FormData) {
   const id = formData.get("id") as string;
-  const statut = formData.get("statut") as "confirme" | "annule";
+  const statut = formData.get("statut") as string;
   if (!id || !["confirme", "annule"].includes(statut)) return;
 
-  await createSupabaseAdminClient()
-    .from("demandes_creneau")
-    .update({ statut })
-    .eq("id", id);
-
+  await updateStatutDemande(id, statut);
   revalidatePath("/admin/demandes-creneau");
 }

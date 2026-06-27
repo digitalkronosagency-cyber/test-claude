@@ -1,7 +1,6 @@
 "use server";
 
-import { createSupabaseAdminClient } from "@/lib/supabase/server";
-import { config } from "@/lib/config";
+import { fetchParametres, updateParametres } from "@/lib/queries/admin";
 import { revalidatePath } from "next/cache";
 
 export type ParamState = { status: "idle" } | { status: "success" } | { status: "error"; message: string };
@@ -12,16 +11,18 @@ export async function sauvegarderParametresAction(
 ): Promise<ParamState> {
   const sms_active = formData.get("sms_active") === "on";
   const parrainage_actif = formData.get("parrainage_actif") === "on";
-  const recompense_parrainage = (formData.get("recompense_parrainage") as string | null)?.trim() || null;
-  const lien_avis_google = (formData.get("lien_avis_google") as string | null)?.trim() || null;
+  const recompense_parrainage = (formData.get("recompense_parrainage") as string | null)?.trim() ?? "";
+  const lien_avis_google = (formData.get("lien_avis_google") as string | null)?.trim() ?? "";
 
-  const { error } = await createSupabaseAdminClient()
-    .from("parametres_institut")
-    .update({ sms_active, parrainage_actif, recompense_parrainage, lien_avis_google })
-    .eq("institut_id", config.institut.id);
+  const params = await fetchParametres();
+  if (!params) return { status: "error", message: "Paramètres introuvables." };
 
-  if (error) return { status: "error", message: "Erreur lors de la sauvegarde." };
-  revalidatePath("/admin/parametres");
-  revalidatePath("/");
-  return { status: "success" };
+  try {
+    await updateParametres({ id: params.id, sms_active, parrainage_actif, recompense_parrainage, lien_avis_google });
+    revalidatePath("/admin/parametres");
+    revalidatePath("/");
+    return { status: "success" };
+  } catch {
+    return { status: "error", message: "Erreur lors de la sauvegarde." };
+  }
 }
